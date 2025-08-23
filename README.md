@@ -16,25 +16,24 @@
 
 ### Estructura del repositorio 📐
 ```
-+-- Bibliografia
-|	  +--Apuntes
-       |  +--Apunte1
-|		+--Resumenes
-|	     |  +--Resumen1
-|		+--Filminas
-|		   |  +--Filmina1
+├── Bibliografia
+│      ├── Apuntes
+│      │      └── Apunte1
+│      ├── Resumenes
+│      │      └── Resumen1
+│      └── Filminas
+│	          └── Filmina1
 │
-│---Trabajos_practicos
-|	  |-------Guias_de_trabajos
-|		│       |-------Guia1
-|	  |-------Trabajos_evaluables
-|		│       |-------Tp1
-|	  |-------No_evaluables
-|		        |-------Tp2
-│---Trabajos_de_investigación/teoricos
-|	  |-------Tp3
+├── Trabajos_practicos
+|      ├──Guia_de_trabajos     
+|      ├──Trabajos_evaluables
+|      │      └── TpEvaluable
+|      └──Trabajos_no_evaluables
+|		      └── TpNoEvaluable
+├── Trabajos_de_teóricos/investigación
+|      └──TpTeorico
 │
-Plan_de_gestión_de_configuración
+└── Plan_de_gestión_de_configuración
 ```
 
 
@@ -43,12 +42,16 @@ Para la ubicación física se parte del directorio raíz del repositorio (cuyo n
 
 | Nombre del ítem de configuración  	| Regla de nombrado                          	| Ubicación física              	      |
 |-----------------------------------	|--------------------------------------------	|-------------------------------------	|
-| No_evaluable          	            | Descripcion_Autor.pdf                  	    |/Trabajos_Practicos/No_evaluable       |
-| Trabajos_evaluables                 | completar                                   |/Trabajos_Practicos/Trabajos_evaluables|
-| Apuntes                            	| ISW_YYYY_Descripcion.pdf                 	  | /Bibliografia/Apuntes                 |
+|Apunte		|	AP_<NombreDelApunte>.pdf| /Bibliografia/Apuntes |
+|Resumen	|	RE_<NroParcial>_<ApellidoDueño>.pdf| /Bibliografia/Resumenes |
+|Presentación	|	PPT_<NroUnidad>_<NombreUnidad>.pptx|/Bibliografia/Filminas |
+|Guia trabajos practicos	|	GUIA_TPS.pdf|/Trabajos_Practicos |
+|Trabajo practico evaluable	|ISW_TPE_<NroTP>_<NombreTP>_GRUPO11.pdf|/Trabajos_Practicos/Trabajos_evaluables |
+|Trabajo práctivo no evaluable	|ISW_TPNE_<NroTP>_<NombreTP>_GRUPO11.pdf| /Trabajos_Practicos/Trabajos_no_evaluables  |
+|Trabajo teórico/Investigación	|ISW_TTI_<NroTP>_<NombreTP>_GRUPO11.pdf|/Trabajos_de_investigación_teoricos |
+|Plan de gestión de configuración|	ISW_PLAN_GEST_REPO.pdf|/ |
 
 ### Linea base 📝
 
 El equipo de trabajo llegó a la decisión de crear un nuevo tag cada vez que los trabajos prácticos se encuentren ya corregidos y/o evaluados por los profesores.
-
 
