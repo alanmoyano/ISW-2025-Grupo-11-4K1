@@ -3,16 +3,16 @@
 ## Ingenieria de Software - Grupo 11 - 4K1 - 2025 - UTN FRC
 
 ### Alumnos 🎓
--94212 Moyano Alan Fernando 
--89545 Nievas Britos María Agustina 
--95378 Zavala Gonzalo 
--83764 Mario Romero 
--79068 Siro Gimenez 
--85616 Crespo Santiago 
--97963 Rivadero Maximiliano 
--96405 Abrate Tomas Ezequiel 
--95907 Carlino María Sofía 
--89795 Ortiz Romina Luciana 
+-  94212 Moyano Alan Fernando 
+-  89545 Nievas Britos María Agustina 
+-  95378 Zavala Gonzalo 
+-  83764 Mario Romero 
+-  79068 Siro Gimenez 
+-  85616 Crespo Santiago 
+-  97963 Rivadero Maximiliano 
+-  96405 Abrate Tomas Ezequiel 
+-  95907 Carlino María Sofía 
+-  89795 Ortiz Romina Luciana 
 
 ### Estructura del repositorio 📐
 ```
