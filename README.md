@@ -3,27 +3,26 @@
 ## Ingenieria de Software - Grupo 11 - 4K1 - 2025 - UTN FRC
 
 ### Alumnos 🎓
--94212 Moyano Alan Fernando primera vez
--89545 Nievas Britos María Agustina primera vez
--95378 Zavala Gonzalo primera vez
--83764 Mario Romero primera vez
--79068 Siro Gimenez primera vez
--85616 Crespo Santiago primera vez
--97963 Rivadero Maximiliano primera vez
--96405 Abrate Tomas Ezequiel primera vez
--95907 Carlino María Sofía primera vez
--89795 Ortiz Romina Luciana primera vez
+-94212 Moyano Alan Fernando 
+-89545 Nievas Britos María Agustina 
+-95378 Zavala Gonzalo 
+-83764 Mario Romero 
+-79068 Siro Gimenez 
+-85616 Crespo Santiago 
+-97963 Rivadero Maximiliano 
+-96405 Abrate Tomas Ezequiel 
+-95907 Carlino María Sofía 
+-89795 Ortiz Romina Luciana 
 
 ### Estructura del repositorio 📐
-│---Bibliografía
-|   │
-|   │
-|		Apuntes
-|	  |-------Apunte1
-|		Resumenes
-|	  |-------Resumen1
-|		Filminas
-|		|-------Filmina1
+```
++-- Bibliografia
+|	  +--Apuntes
+       |  +--Apunte1
+|		+--Resumenes
+|	     |  +--Resumen1
+|		+--Filminas
+|		   |  +--Filmina1
 │
 │---Trabajos_practicos
 |	  |-------Guias_de_trabajos
@@ -36,6 +35,8 @@
 |	  |-------Tp3
 │
 Plan_de_gestión_de_configuración
+```
+
 
 ### Ítems de configuración 🔧
 Para la ubicación física se parte del directorio raíz del repositorio (cuyo nombre es ISW_4K3_2021)
@@ -46,7 +47,8 @@ Para la ubicación física se parte del directorio raíz del repositorio (cuyo n
 | Trabajos_evaluables                 | completar                                   |/Trabajos_Practicos/Trabajos_evaluables|
 | Apuntes                            	| ISW_YYYY_Descripcion.pdf                 	  | /Bibliografia/Apuntes                 |
 
+### Linea base 📝
 
-
+El equipo de trabajo llegó a la decisión de crear un nuevo tag cada vez que los trabajos prácticos se encuentren ya corregidos y/o evaluados por los profesores.
 
 
