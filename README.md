@@ -25,7 +25,7 @@
 │	          └── Filmina1
 │
 ├── Trabajos_practicos
-|      ├──Guia_de_trabajos     
+|      ├──Guia_trabajos_practicos    
 |      ├──Trabajos_evaluables
 |      │      └── TpEvaluable
 |      └──Trabajos_no_evaluables
@@ -38,13 +38,13 @@
 
 
 ### Ítems de configuración 🔧
-Para la ubicación física se parte del directorio raíz del repositorio (cuyo nombre es ISW_4K3_2021)
+Para la ubicación física se parte del directorio raíz del repositorio (cuyo nombre es ISW-2025-Grupo-11-4K1)
 
 | Nombre del ítem de configuración  	| Regla de nombrado                          	| Ubicación física              	      |
 |-----------------------------------	|--------------------------------------------	|-------------------------------------	|
 |Apunte		|	AP_<NombreDelApunte>.pdf| /Bibliografia/Apuntes |
 |Resumen	|	RE_<NroParcial>_<ApellidoDueño>.pdf| /Bibliografia/Resumenes |
-|Presentación	|	PPT_<NroUnidad>_<NombreUnidad>.pptx|/Bibliografia/Filminas |
+|Diapositivas de clase	|	PPT_<NroUnidad>_<NombreUnidad>.pptx|/Bibliografia/Filminas |
 |Guia trabajos practicos	|	GUIA_TPS.pdf|/Trabajos_Practicos |
 |Trabajo practico evaluable	|ISW_TPE_<NroTP>_<NombreTP>_GRUPO11.pdf|/Trabajos_Practicos/Trabajos_evaluables |
 |Trabajo práctivo no evaluable	|ISW_TPNE_<NroTP>_<NombreTP>_GRUPO11.pdf| /Trabajos_Practicos/Trabajos_no_evaluables  |
@@ -53,5 +53,5 @@ Para la ubicación física se parte del directorio raíz del repositorio (cuyo n
 
 ### Linea base 📝
 
-El equipo de trabajo llegó a la decisión de crear un nuevo tag cada vez que los trabajos prácticos se encuentren ya corregidos y/o evaluados por los profesores.
+El equipo de trabajo llegó a la decisión de crear una nueva linea base o actualizar la misma cada vez que los trabajos prácticos se encuentren ya corregidos y/o evaluados por los profesores.
 
