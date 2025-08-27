@@ -57,7 +57,7 @@ Para la ubicación física se parte del directorio raíz del repositorio (cuyo n
 
 ### Linea base 📝
 
-El equipo de trabajo llegó a la decisión de crear una nueva linea base o actualizar la misma cada vez que los trabajos prácticos se encuentren ya corregidos y/o evaluados por los profesores.Estas líneas base se organizarán dentro del repositorio de GitHub mediante la utilización de un Tag, y de manera visual mediante el sistema de versionado con los primeros 2 dígitos, indicados mediante XX en tabla de ítems de configuración y en el glosario
+El equipo de trabajo llegó a la decisión de crear una nueva linea base o actualizar la misma cada vez que los trabajos prácticos se encuentren ya corregidos y/o evaluados por los profesores. Estas líneas base se organizarán dentro del repositorio de GitHub mediante la utilización de un Tag, y de manera visual mediante el sistema de versionado con los primeros 2 dígitos, indicados mediante XX en tabla de ítems de configuración y en el glosario
 
 ### Glosario
 
