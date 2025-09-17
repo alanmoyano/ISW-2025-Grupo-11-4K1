@@ -47,7 +47,7 @@ Para la ubicación física se parte del directorio raíz del repositorio (cuyo n
 | Nombre del ítem de configuración | Regla de nombrado                                    | Ubicación física                             |
 | -------------------------------- | ---------------------------------------------------- | -------------------------------------------- |
 | Apunte                           | `AP_<NombreDelApunte>.pdf`                           | /Bibliografia/Apuntes                        |
-| Resumen                          | `RE_<NroParcial>_<ApellidoDueño>_<XX.YY.ZZ>.pdf`     | /Bibliografia/Resumenes                      |
+| Resumen                          | `RE_<NroParcial>_<ApellidoDueño>.pdf`     | /Bibliografia/Resumenes                      |
 | Diapositivas de clase            | `PPT_<NroFilmina>_<NombreTema>.pdf`                  | /Bibliografia/Filminas                       |
 | Guia trabajos practicos          | `GUIA_<TipoTP>.pdf`                                  | /Trabajos_Practicos/Guias_trabajos_practicos |
 | Trabajo practico evaluable       | `ISW_TPE_<NroTP>_<NombreTP>_GRUPO11.pdf`  | /Trabajos_Practicos/Trabajos_evaluables      |
