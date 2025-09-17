@@ -50,10 +50,10 @@ Para la ubicación física se parte del directorio raíz del repositorio (cuyo n
 | Resumen                          | `RE_<NroParcial>_<ApellidoDueño>_<XX.YY.ZZ>.pdf`     | /Bibliografia/Resumenes                      |
 | Diapositivas de clase            | `PPT_<NroFilmina>_<NombreTema>.pdf`                  | /Bibliografia/Filminas                       |
 | Guia trabajos practicos          | `GUIA_<TipoTP>.pdf`                                  | /Trabajos_Practicos/Guias_trabajos_practicos |
-| Trabajo practico evaluable       | `ISW_TPE_<NroTP>_<NombreTP>_<XX.YY.ZZ>_GRUPO11.pdf`  | /Trabajos_Practicos/Trabajos_evaluables      |
-| Trabajo práctivo no evaluable    | `ISW_TPNE_<NroTP>_<NombreTP>_<XX.YY.ZZ>_GRUPO11.pdf` | /Trabajos_Practicos/Trabajos_no_evaluables   |
-| Trabajo teórico/Investigación    | `ISW_TTI_<NroTP>_<NombreTP>_<XX.YY.ZZ>_GRUPO11.pdf`  | /Trabajos_de_investigación_teoricos          |
-| Plan de gestión de configuración | `ISW_PLAN_GEST_REPO_<XX.YY.ZZ>.pdf`                  | /                                            |
+| Trabajo practico evaluable       | `ISW_TPE_<NroTP>_<NombreTP>_GRUPO11.pdf`  | /Trabajos_Practicos/Trabajos_evaluables      |
+| Trabajo práctivo no evaluable    | `ISW_TPNE_<NroTP>_<NombreTP>_GRUPO11.pdf` | /Trabajos_Practicos/Trabajos_no_evaluables   |
+| Trabajo teórico/Investigación    | `ISW_TTI_<NroTP>_<NombreTP>_GRUPO11.pdf`  | /Trabajos_de_investigación_teoricos          |
+| Plan de gestión de configuración | `ISW_PLAN_GEST_REPO.pdf`                  | /                                            |
 
 ### Linea base 📝
 
