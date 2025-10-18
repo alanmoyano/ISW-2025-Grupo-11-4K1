@@ -52,6 +52,7 @@
       },
       "devDependencies": {
         "@types/bun": "latest",
+        "typescript": "catalog:",
         "vite": "catalog:",
         "vitest": "^3.2.4",
       },
