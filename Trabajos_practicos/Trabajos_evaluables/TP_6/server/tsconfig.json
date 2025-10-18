@@ -16,6 +16,7 @@
     "outDir": "dist",
     "noEmit": false,
     "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
 
     // Module resolution
     "moduleResolution": "bundler",
