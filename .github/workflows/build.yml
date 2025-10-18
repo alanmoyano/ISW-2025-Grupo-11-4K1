@@ -1,0 +1,21 @@
+name: Build TP 6
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install bun
+        uses: oven-sh/setup-bun@v2
+      - name: Install dependencies
+        working-directory: Trabajos_practicos/Trabajos_evaluables/TP_6
+        run: bun ci
+      - name: Run build
+        working-directory: Trabajos_practicos/Trabajos_evaluables/TP_6
+        run: bun run build
