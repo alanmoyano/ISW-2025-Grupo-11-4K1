@@ -45,4 +45,12 @@ export function validarFechaVisita(pedidoVisita: Pedido): boolean {
   return true;
 }
 
+export function validarCantidadEntradas(pedido: Pedido): boolean {
+  const cantidad = pedido.entradas.length;
+  return cantidad > 0 && cantidad <= 10;
+}
 
+export function validarCupoDiario(entradasVendidas: number, nuevasEntradas: number): boolean {
+  const CUPO_MAXIMO = 100;
+  return entradasVendidas + nuevasEntradas <= CUPO_MAXIMO;
+}
