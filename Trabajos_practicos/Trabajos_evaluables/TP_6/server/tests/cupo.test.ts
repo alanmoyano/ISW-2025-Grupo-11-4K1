@@ -35,9 +35,9 @@ describe("Validar capacidad y cupo", () => {
       total: 15000,
       numeroTarjeta: 4506460311935388,
       entradas: [
-        { id: 6, tipoEntradaId: 1, edadVisitante: 40, precio: 5000 },
-        { id: 7, tipoEntradaId: 1, edadVisitante: 41, precio: 5000 },
-        { id: 8, tipoEntradaId: 1, edadVisitante: 12, precio: 5000 },
+        { id: 6, tipoEntradaId: 1, edadVisitante: 40, precio: 5000, utilizada: false },
+        { id: 7, tipoEntradaId: 1, edadVisitante: 41, precio: 5000, utilizada: false },
+        { id: 8, tipoEntradaId: 1, edadVisitante: 12, precio: 5000, utilizada: false },
       ],
     };
     // Cupo restante = 100 - 98 = 2 / Pedido 3 (no pasa)
