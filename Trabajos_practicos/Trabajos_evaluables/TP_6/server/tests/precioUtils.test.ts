@@ -1,4 +1,4 @@
-/*
+
 import { describe, it, expect } from "bun:test";
 import { calcularPrecioTotal } from "../src/precioUtils";
 import type { Entrada } from "@shared/types";
@@ -54,4 +54,3 @@ describe("Lógica de Cálculo de Precios", () => {
   });
 
 });
-*/
