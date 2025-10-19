@@ -45,7 +45,4 @@ export function validarFechaVisita(pedidoVisita: Pedido): boolean {
   return true;
 }
 
-export function validarCupoDiario(entradasVendidas: number): boolean {
-  const CUPO_MAXIMO = 100;
-  return entradasVendidas < CUPO_MAXIMO;
-}
+
