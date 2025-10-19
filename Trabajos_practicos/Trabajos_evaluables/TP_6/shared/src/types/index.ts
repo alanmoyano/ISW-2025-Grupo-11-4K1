@@ -25,6 +25,9 @@ export type Pedido = {
   usuarioId: number;
   entradas: Array<Entrada>;
   idFormaDePago: number;
+  numeroTarjeta?: number;
+  fechaVencimientoTarjeta?: string;
+  cvvTarjeta?: number;
   fecha: string;
   total: number;
 };
