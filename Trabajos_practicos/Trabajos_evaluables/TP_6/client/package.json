@@ -22,7 +22,8 @@
     "server": "workspace:*",
     "shared": "workspace:*",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.14"
+    "tailwindcss": "^4.1.14",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^20.0.5",
