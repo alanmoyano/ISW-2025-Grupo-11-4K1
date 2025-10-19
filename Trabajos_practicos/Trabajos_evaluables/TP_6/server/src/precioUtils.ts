@@ -1,8 +1,6 @@
 import type { Entrada } from "@shared/types";
 
-// REQUISITO: Precios base para las entradas.
-// VIP: 10000, Regular: 5000.
-// Usamos los IDs: 1 para Regular, 2 para VIP.
+
 const PRECIOS_BASE = {
   1: 5000, // ID 1: Regular
   2: 10000, // ID 2: VIP
@@ -31,13 +29,13 @@ function calcularPrecioEntrada(entrada: EntradaDesdeCliente): number {
     return precioBase * 0.5;
   }
 
-  // Si no se cumple ninguna regla de descuento, se devuelve el precio completo.
+  
   return precioBase;
 }
 
 /**
- * Calcula el precio total para una lista de entradas.
- * ESTA ES LA FUNCIÓN QUE TU TEST IMPORTA.
+
+
  * @param entradas Array de objetos de tipo EntradaDesdeCliente.
  * @returns El monto total a pagar.
  */
@@ -45,6 +43,6 @@ export function calcularPrecioTotal(entradas: EntradaDesdeCliente[]): number {
   // Usamos .reduce() para sumar el precio calculado de cada entrada en la lista.
   return entradas.reduce(
     (total, entrada) => total + calcularPrecioEntrada(entrada),
-    0, // El valor inicial del total es 0.
+    0, 
   );
 }
