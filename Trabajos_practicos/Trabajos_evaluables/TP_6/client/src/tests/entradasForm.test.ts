@@ -1,6 +1,6 @@
 import { expect, describe, it } from "vitest"
 import { Pedido } from "@shared/types"
-// import { entradasFormSchema } from "../lib/schemas.ts";
+import { entradasFormSchema } from "../lib/schemas.ts";
 
 describe("Validación del formulario de compra de entradas", () => {
 
