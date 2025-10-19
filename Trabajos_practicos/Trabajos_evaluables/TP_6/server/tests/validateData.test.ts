@@ -2,6 +2,7 @@ import app from "@server/index";
 import type { Pedido } from "@shared/types";
 import { describe, expect, it } from "vitest";
 import { validarFechaVisita } from "@server/entradasValidation";
+import { validarAlgorimoLuhn, validarLongitudNumeroTarjeta } from "@server/formaPagoValidation";
 
 describe("Validar los datos que se cargan", () => {
   it("La fecha no debe ser un lunes o un dia festivo", async () => {
@@ -37,5 +38,20 @@ describe("Validar los datos que se cargan", () => {
 
     expect(validarFechaVisita(pedidoVisita)).toBe(false);
     expect(validarFechaVisita(pedidoVisita2)).toBe(false);
+  });
+
+  it("Si la forma de pago es tarjeta de debito/credito, deben ingresar un numero entre 16 y 19 digitos", async () => {
+    const numeroDeTarjetaValido = 4506460311935388;
+    const numeroDeTarjetaInvalido = 123456789;
+
+    expect(validarLongitudNumeroTarjeta(numeroDeTarjetaValido)).toBe(true);
+    expect(validarLongitudNumeroTarjeta(numeroDeTarjetaInvalido)).toBe(false);
+  });
+  it("Si la forma de pago es tarjeta de debito/credito, deben ingresar un numero de tarjeta que siga el algoritmo de Luhn", async () => {
+    const numeroDeTarjetaValido = 4506460311935388;
+    const numeroDeTarjetaInvalido = 1234567890123456;
+
+    expect(validarAlgorimoLuhn(numeroDeTarjetaValido)).toBe(true);
+    expect(validarAlgorimoLuhn(numeroDeTarjetaInvalido)).toBe(false);
   });
 });
