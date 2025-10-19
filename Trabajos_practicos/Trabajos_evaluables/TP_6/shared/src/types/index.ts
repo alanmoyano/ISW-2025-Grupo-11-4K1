@@ -19,15 +19,14 @@ export type Entrada = {
   tipoEntradaId: number;
   edadVisitante: number;
   precio: number;
+  utilizada: boolean
 };
 
 export type Pedido = {
+  idPedido: number;
   usuarioId: number;
   entradas: Array<Entrada>;
   idFormaDePago: number;
-  numeroTarjeta?: number;
-  fechaVencimientoTarjeta?: string;
-  cvvTarjeta?: number;
   fecha: string;
   total: number;
 };
