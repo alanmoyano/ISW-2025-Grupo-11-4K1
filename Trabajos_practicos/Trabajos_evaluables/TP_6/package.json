@@ -28,7 +28,8 @@
     "format": "biome format . --write"
   },
   "dependencies": {
-    "hono": "^4.10.1"
+    "hono": "^4.10.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.6",
