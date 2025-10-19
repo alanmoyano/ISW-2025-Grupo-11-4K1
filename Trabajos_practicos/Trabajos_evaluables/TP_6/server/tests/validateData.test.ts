@@ -2,7 +2,6 @@ import app from "@server/index";
 import type { Pedido } from "@shared/types";
 import { describe, expect, it } from "vitest";
 import { validarFechaVisita } from "@server/entradasValidation";
-import { validarAlgorimoLuhn, validarLongitudNumeroTarjeta } from "@server/formaPagoValidation";
 
 describe("Validar los datos que se cargan", () => {
   it("La fecha no debe ser un lunes o un dia festivo", async () => {
