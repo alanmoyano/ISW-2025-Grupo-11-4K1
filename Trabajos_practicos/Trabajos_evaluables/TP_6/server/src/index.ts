@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import type { ApiResponse } from "@shared/types";
+import type { ApiResponse, TipoEntrada } from "@shared/types";
 
 export const app = new Hono()
 
@@ -18,5 +18,4 @@ export const app = new Hono()
 
     return c.json(data, { status: 200 });
   });
-
 export default app;
