@@ -6,10 +6,20 @@ export type ApiResponse<T = string> = {
   success: boolean;
 };
 
+export const TipoEntradaEnum = {
+  REGULAR: 1,
+  VIP: 2,
+  MENOR: 3,
+} as const;
+
+const tipoEntradaLiterals = Object.values(TipoEntradaEnum).map(v => z.literal(v));
+
+export const tipoEntradaIdSchema = z.union(tipoEntradaLiterals as [typeof tipoEntradaLiterals[0], ...typeof tipoEntradaLiterals]);
+
 export const tipoEntradaSchema = z.object({
-  id: z.number(),
+  id: tipoEntradaIdSchema,
   nombre: z.string(),
-  precio: z.number(),
+  precio: z.number(), 
 });
 
 export type TipoEntrada = z.infer<typeof tipoEntradaSchema>;
@@ -23,7 +33,7 @@ export type FormaDePago = z.infer<typeof formaDePagoSchema>;
 
 export const entradaSchema = z.object({
   id: z.number(),
-  tipoEntradaId: z.number(),
+  tipoEntradaId: tipoEntradaIdSchema,
   edadVisitante: z.number(),
   precio: z.number(),
   utilizada: z.boolean(),

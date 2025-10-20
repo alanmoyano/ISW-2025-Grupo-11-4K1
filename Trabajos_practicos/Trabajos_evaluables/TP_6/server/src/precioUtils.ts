@@ -1,9 +1,10 @@
 import type { Entrada } from "@shared/types";
+import { TipoEntradaEnum } from "@shared/types";
 
 
 const PRECIOS_BASE = {
-  1: 5000, // ID 1: Regular
-  2: 10000, // ID 2: VIP
+  [TipoEntradaEnum.REGULAR]: 5000, 
+  [TipoEntradaEnum.VIP]: 10000,
 };
 
 // Este es el tipo de dato que el test (y el cliente) envían.
