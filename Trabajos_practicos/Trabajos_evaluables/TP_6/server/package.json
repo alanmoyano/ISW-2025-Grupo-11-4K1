@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "bun --watch run src/index.ts && tsc --watch",
-    "test": "bun test"
+    "test": "bun test ./tests"
   },
   "dependencies": {
     "hono": "^4.7.11",
