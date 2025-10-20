@@ -9,17 +9,15 @@ export async function obtenerTiposDeEntrada(
 
   const resultado = db.query("SELECT * FROM tipo_entrada").all();
 
-  console.log(resultado);
-
-  for (let fila in resultado) {
-    if (!isTipoEntrada(resultado[fila])) {
+  for (const tipoEntrada of resultado) {
+    if (!isTipoEntrada(tipoEntrada)) {
       throw new Error("Tipo de entrada inválido");
     }
 
     const nuevoTipoEntrada: TipoEntrada = {
-      id: resultado[fila].id,
-      nombre: resultado[fila].nombre,
-      precio: resultado[fila].precio,
+      id: tipoEntrada.id,
+      nombre: tipoEntrada.nombre,
+      precio: tipoEntrada.precio,
     };
     tiposEntrada.push(nuevoTipoEntrada);
   }
