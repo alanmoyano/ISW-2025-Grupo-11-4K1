@@ -1,28 +1,28 @@
-import { Database } from "sqlite3";
+import { Database } from "bun:sqlite";
 
 export function initDatabase(): Database {
   const db = new Database("database.sqlite");
 
-  db.exec(
+  db.run(
     `CREATE TABLE IF NOT EXISTS usuario (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL
-    );`,
+    );`
   );
 
-  db.exec(`
+  db.run(`
     CREATE TABLE IF NOT EXISTS forma_de_pago (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT UNIQUE NOT NULL
     );`);
-  db.exec(`
+  db.run(`
     CREATE TABLE IF NOT EXISTS tipo_entrada (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT UNIQUE NOT NULL,
         precio REAL NOT NULL
     );`);
-  db.exec(`
+  db.run(`
     CREATE TABLE IF NOT EXISTS pedido (
         id_pedido INTEGER PRIMARY KEY AUTOINCREMENT,
         usuario_id INTEGER NOT NULL,
@@ -34,7 +34,7 @@ export function initDatabase(): Database {
         FOREIGN KEY (usuario_id) REFERENCES usuario(id),
         FOREIGN KEY (id_forma_de_pago) REFERENCES forma_de_pago(id)
     );`);
-  db.exec(`
+  db.run(`
     CREATE TABLE IF NOT EXISTS entrada (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 

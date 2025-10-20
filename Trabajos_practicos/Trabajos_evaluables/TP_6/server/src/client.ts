@@ -6,5 +6,3 @@ export type Client = ReturnType<typeof hc<AppType>>;
 
 export const hcWithType = (...args: Parameters<typeof hc>): Client =>
   hc<AppType>(...args);
-
-hcWithType("http://localhost:3000").hello.$get();

@@ -1,8 +1,8 @@
+import { buildApiResponse } from "@shared/utils";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import type { ApiResponse, TipoEntrada } from "@shared/types";
-import { initDatabase } from "./dbDefinition";
 import { obtenerTiposDeEntrada } from "./dbAccess";
+import { initDatabase } from "./dbDefinition";
 
 const db = initDatabase();
 
@@ -10,31 +10,22 @@ export const app = new Hono()
 
   .use(cors())
 
-  .use(async (c, next) => {
-    c.set("db", db);
-    await next();
-  })
-
-  .get("/", (c) => {
-    return c.text("Hello Hono!");
-  })
-
-  .get("/hello", async (c) => {
-    const data: ApiResponse = {
-      message: "Hello BHVR!",
-      success: true,
-    };
-
-    return c.json(data, { status: 200 });
-  })
-
   .get("/entradas", async (c) => {
-    const resultados = await obtenerTiposDeEntrada(c.get("db"));
-    const data: ApiResponse = {
-      message: resultados,
-      success: true,
-    };
-    return c.json(data, { status: 200 });
+    try {
+      const resultados = await obtenerTiposDeEntrada(db);
+      const data = buildApiResponse(resultados, true);
+      return c.json(data, { status: 200 });
+    } catch (error) {
+      let message = "Error al obtener los tipos de entrada: ";
+
+      if (Error.isError(error)) {
+        message += error.message;
+      } else {
+        message += String(error);
+      }
+
+      return c.json(buildApiResponse(null, false, message), { status: 500 });
+    }
   });
 
 export default app;
