@@ -13,18 +13,56 @@ describe("Validar capacidad y cupo", () => {
       fecha: "2025-11-04",
       total: 25000,
       entradas: [
-        { id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 5000, utilizada: false },
-        { id: 2, tipoEntradaId: 1, edadVisitante: 32, precio: 5000, utilizada: false },
-        { id: 3, tipoEntradaId: 1, edadVisitante: 8, precio: 2500, utilizada: false },
-        { id: 4, tipoEntradaId: 2, edadVisitante: 65, precio: 7500, utilizada: false },
-        { id: 5, tipoEntradaId: 1, edadVisitante: 5, precio: 2500, utilizada: false },
+        {
+          id: 1,
+          tipoEntradaId: 1,
+          edadVisitante: 30,
+          precio: 5000,
+          utilizada: false,
+          pedidoId: 1,
+        },
+        {
+          id: 2,
+          tipoEntradaId: 1,
+          edadVisitante: 32,
+          precio: 5000,
+          utilizada: false,
+          pedidoId: 1,
+        },
+        {
+          id: 3,
+          tipoEntradaId: 1,
+          edadVisitante: 8,
+          precio: 2500,
+          utilizada: false,
+          pedidoId: 1,
+        },
+        {
+          id: 4,
+          tipoEntradaId: 2,
+          edadVisitante: 65,
+          precio: 7500,
+          utilizada: false,
+          pedidoId: 1,
+        },
+        {
+          id: 5,
+          tipoEntradaId: 1,
+          edadVisitante: 5,
+          precio: 2500,
+          utilizada: false,
+          pedidoId: 1,
+        },
       ],
     };
 
     // Cupo restante = 100 - 50 = 50 / Pedido 5 (pasa)
     mockFetchEntradasVendidas.mockResolvedValue(50);
 
-    const resultado = await validarDisponibilidadCupo(pedido, mockFetchEntradasVendidas);
+    const resultado = await validarDisponibilidadCupo(
+      pedido,
+      mockFetchEntradasVendidas,
+    );
     expect(resultado).toBe(true);
   });
 
@@ -36,15 +74,39 @@ describe("Validar capacidad y cupo", () => {
       fecha: "2025-11-05",
       total: 15000,
       entradas: [
-        { id: 6, tipoEntradaId: 1, edadVisitante: 40, precio: 5000, utilizada: false },
-        { id: 7, tipoEntradaId: 1, edadVisitante: 41, precio: 5000, utilizada: false },
-        { id: 8, tipoEntradaId: 1, edadVisitante: 12, precio: 5000, utilizada: false },
+        {
+          id: 6,
+          tipoEntradaId: 1,
+          edadVisitante: 40,
+          precio: 5000,
+          utilizada: false,
+          pedidoId: 2,
+        },
+        {
+          id: 7,
+          tipoEntradaId: 1,
+          edadVisitante: 41,
+          precio: 5000,
+          utilizada: false,
+          pedidoId: 2,
+        },
+        {
+          id: 8,
+          tipoEntradaId: 1,
+          edadVisitante: 12,
+          precio: 5000,
+          utilizada: false,
+          pedidoId: 2,
+        },
       ],
     };
     // Cupo restante = 100 - 98 = 2 / Pedido 3 (no pasa)
     mockFetchEntradasVendidas.mockResolvedValue(98);
 
-    const resultado = await validarDisponibilidadCupo(pedido, mockFetchEntradasVendidas);
+    const resultado = await validarDisponibilidadCupo(
+      pedido,
+      mockFetchEntradasVendidas,
+    );
     expect(resultado).toBe(false);
   });
 
@@ -56,14 +118,31 @@ describe("Validar capacidad y cupo", () => {
       fecha: "2025-11-06",
       total: 10000,
       entradas: [
-        { id: 9, tipoEntradaId: 1, edadVisitante: 25, precio: 5000, utilizada: false },
-        { id: 10, tipoEntradaId: 1, edadVisitante: 25, precio: 5000, utilizada: false },
+        {
+          id: 9,
+          tipoEntradaId: 1,
+          edadVisitante: 25,
+          precio: 5000,
+          utilizada: false,
+          pedidoId: 3,
+        },
+        {
+          id: 10,
+          tipoEntradaId: 1,
+          edadVisitante: 25,
+          precio: 5000,
+          utilizada: false,
+          pedidoId: 3,
+        },
       ],
     };
     // Cupo restante = 100 - 98 = 2 / Pedido 2 (pasa)
     mockFetchEntradasVendidas.mockResolvedValue(98);
 
-    const resultado = await validarDisponibilidadCupo(pedido, mockFetchEntradasVendidas);
+    const resultado = await validarDisponibilidadCupo(
+      pedido,
+      mockFetchEntradasVendidas,
+    );
     expect(resultado).toBe(true);
   });
 });
