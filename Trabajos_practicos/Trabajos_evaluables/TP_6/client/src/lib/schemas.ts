@@ -1,8 +1,15 @@
 import { z } from "zod";
+import { tipoEntradaIdSchema } from "@shared/types";
 
 const diasFestivos = new Set(["2025-12-25", "2025-01-01"]);
 
-export const entradaFormSchema = z.object({});
+export const entradaFormSchema = z.object({
+  edadVisitante: z
+    .number({ message: "Debe indicar la edad del visitante" })
+    .min(0, "La edad no puede ser negativa")
+    .max(120, "La edad no puede ser mayor a 120"),
+  tipoEntradaId: tipoEntradaIdSchema,
+});
 
 export const entradasFormSchema = z.object({
   fecha: z
