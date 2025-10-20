@@ -1,6 +1,6 @@
 import { expect, describe, it } from "vitest"
 import { Pedido } from "@shared/types"
-import { entradasFormSchema } from "../lib/schemas.ts";
+import { entradaFormSchema, entradasFormSchema } from "../lib/schemas.ts";
 
 describe("Validación del formulario de compra de entradas", () => {
 
@@ -92,5 +92,48 @@ describe("Validación del formulario de compra de entradas", () => {
     const result = entradasFormSchema.safeParse(pedido);
     expect(result.success).toBe(true);
   });
+
+  describe("Entrada", () => {
+    it("Debe requerir la edad del visitante", () => {
+      const pedido: Pedido = {
+        idPedido: 1,
+        usuarioId: 1,
+        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: null, precio: 1000, utilizada: false }],
+        idFormaDePago: 1,
+        fecha: "2025-10-21",
+        total: 1000,
+      };
+
+      const result = entradasFormSchema.safeParse(pedido);
+      expect(result.success).toBe(false);
+    });
+
+    it("Debe requerir el tipo de entrada", () => {
+      const pedido: Pedido = {
+        idPedido: 1,
+        usuarioId: 1,
+        entradas: [{ id: 1, tipoEntradaId: null, edadVisitante: 30, precio: 1000, utilizada: false }],
+        idFormaDePago: 1,
+        fecha: "2025-10-21",
+        total: 1000,
+      };
+
+      const result = entradasFormSchema.safeParse(pedido);
+      expect(result.success).toBe(false);
+    });
+
+    it("Debe fallar si la edad es negativa", () => {
+      const entrada = { id: 1, tipoEntradaId: 1, edadVisitante: -3, precio: 1000, utilizada: false};
+      const result = entradaFormSchema.safeParse(entrada);
+      expect(result.success).toBe(false);
+    });
+
+    it("Debe fallar si la edad supera los 110 años", () => {
+      const entrada = { id: 1, tipoEntradaId: 1, edadVisitante: 111, precio: 1000, utilizada: false};
+      const result = entradaFormSchema.safeParse(entrada);
+      expect(result.success).toBe(false);
+    });
+    
+  })
 
 });
