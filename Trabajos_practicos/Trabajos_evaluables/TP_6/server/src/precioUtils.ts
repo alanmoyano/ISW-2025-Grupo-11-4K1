@@ -10,7 +10,7 @@ const PRECIOS_BASE = {
 // Es una 'Entrada' pero sin 'id' y 'precio', ya que esos datos los genera el servidor.
 type EntradaDesdeCliente = Omit<Entrada, "id" | "precio">;
 
-/**
+/*
  * Calcula el precio de una única entrada aplicando las reglas de descuento.
  * Esta función es una ayuda interna para mantener el código limpio.
  * @param entrada La entrada a calcular.

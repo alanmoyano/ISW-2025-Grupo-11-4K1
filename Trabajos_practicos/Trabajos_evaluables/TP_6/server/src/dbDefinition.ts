@@ -8,7 +8,7 @@ export function initDatabase(): Database {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nombre TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL
-    );`
+    );`,
   );
 
   db.run(`
