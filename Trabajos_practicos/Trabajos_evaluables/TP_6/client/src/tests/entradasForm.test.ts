@@ -95,7 +95,7 @@ describe("Validación del formulario de compra de entradas", () => {
 
   describe("Entrada", () => {
     it("Debe requerir la edad del visitante", () => {
-      const pedido: Pedido = {
+      const pedido = {
         idPedido: 1,
         usuarioId: 1,
         entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: null, precio: 1000, utilizada: false }],
@@ -109,7 +109,7 @@ describe("Validación del formulario de compra de entradas", () => {
     });
 
     it("Debe requerir el tipo de entrada", () => {
-      const pedido: Pedido = {
+      const pedido = {
         idPedido: 1,
         usuarioId: 1,
         entradas: [{ id: 1, tipoEntradaId: null, edadVisitante: 30, precio: 1000, utilizada: false }],
