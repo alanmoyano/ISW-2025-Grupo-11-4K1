@@ -1,0 +1,20 @@
+{
+  "versionlens.npm.dependencyProperties": [
+    "version",
+    "packageManager",
+    "dependencies",
+    "devDependencies",
+    "peerDependencies",
+    "optionalDependencies",
+    "overrides",
+    "overrides.*",
+    "jspm.dependencies",
+    "jspm.devDependencies",
+    "jspm.peerDependencies",
+    "jspm.optionalDependencies",
+    "pnpm.overrides",
+    "pnpm.overrides.*",
+    "workspaces.catalog",
+    "workspaces.catalogs.*"
+  ]
+}
