@@ -17,7 +17,7 @@ describe("Lógica de Cálculo de Precios", () => {
     expect(resultado).toBe(0);
   });
 
-  // verifica el descuento del 50% para niños (hasta 10 años).
+  // verifica el descuento del 50% para niños en entradas regulares (hasta 10 años).
   it("debería aplicar 50% de descuento a un niño de 10 años (Regular)", () => {
     const entradas: EntradaDesdeCliente[] = [
       { tipoEntradaId: 1, edadVisitante: 10, utilizada: false },
@@ -26,8 +26,28 @@ describe("Lógica de Cálculo de Precios", () => {
     const resultado = calcularPrecioTotal(entradas);
     expect(resultado).toBe(2500);
   });
+  
+  // verifica el descuento del 50% para niños en entradas vip (hasta 10 años).
+  it("debería aplicar 50% de descuento a un niño de 10 años (Regular)", () => {
+    const entradas: EntradaDesdeCliente[] = [
+      { tipoEntradaId: 2, edadVisitante: 10, utilizada: false },
+    ];
+    // Precio Regular: 5000. Descuento 50%: 2500.
+    const resultado = calcularPrecioTotal(entradas);
+    expect(resultado).toBe(5000);
+  });
 
-  // verificaaa el descuento del 50% para mayores (desde 60 años).
+  // verifica el descuento del 50% para mayores en entradas regulares(desde 60 años).
+  it("debería aplicar 50% de descuento a un mayor de 60 años (VIP)", () => {
+    const entradas: EntradaDesdeCliente[] = [
+      { tipoEntradaId: 1, edadVisitante: 60, utilizada: false },
+    ];
+    // Precio VIP: 10000. Descuento 50%: 5000.
+    const resultado = calcularPrecioTotal(entradas);
+    expect(resultado).toBe(2500);
+  });
+  
+  // verifica el descuento del 50% para mayores en entradas vip (desde 60 años).
   it("debería aplicar 50% de descuento a un mayor de 60 años (VIP)", () => {
     const entradas: EntradaDesdeCliente[] = [
       { tipoEntradaId: 2, edadVisitante: 60, utilizada: false },
