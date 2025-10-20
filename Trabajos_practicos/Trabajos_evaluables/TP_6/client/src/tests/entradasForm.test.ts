@@ -133,6 +133,12 @@ describe("Validación del formulario de compra de entradas", () => {
       const result = entradaFormSchema.safeParse(entrada);
       expect(result.success).toBe(false);
     });
+
+    it("Debe fallar si el tipo de entrada es invalido", () => {
+      const entrada = { id: 1, tipoEntradaId: 99, edadVisitante: 30, precio: 1000, utilizada: false};
+      const result = entradaFormSchema.safeParse(entrada);
+      expect(result.success).toBe(false);
+    });
     
   })
 
