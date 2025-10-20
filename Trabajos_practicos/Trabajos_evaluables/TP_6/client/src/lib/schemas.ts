@@ -7,7 +7,7 @@ export const entradaFormSchema = z.object({
   edadVisitante: z
     .number({ message: "Debe indicar la edad del visitante" })
     .min(0, "La edad no puede ser negativa")
-    .max(120, "La edad no puede ser mayor a 120"),
+    .max(110, "La edad no puede ser mayor a 110"),
   tipoEntradaId: tipoEntradaIdSchema,
 });
 
