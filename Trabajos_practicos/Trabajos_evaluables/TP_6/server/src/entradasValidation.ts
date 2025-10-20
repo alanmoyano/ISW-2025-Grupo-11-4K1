@@ -1,27 +1,52 @@
-import type { Entrada } from "@shared/types";
-import type { Pedido } from "@shared/types";
+import type { Entrada, Pedido } from "@shared/types";
+
+const CUPOS = {
+  MAX_ENTRADAS_POR_PEDIDO: 10,
+  CUPO_MAXIMO_DIARIO: 100,
+};
 
 export function validarFechaVisita(pedidoVisita: Pedido): boolean {
   const { fecha } = pedidoVisita;
-
   const fechaVisita = new Date(fecha);
 
-  // verificamos si la fecha no es navidad o año nuevo
+  // Normalizam la fecha de visita a medianoche
+  fechaVisita.setUTCHours(0, 0, 0, 0);
+
+  const hoy = new Date();
+  // Normaliza la fecha de hoy a medianoche
+  hoy.setUTCHours(0, 0, 0, 0);
+
+  // Verificamos la antelación mínima de 2 días
+  const fechaMinimaReserva = new Date(hoy);
+  fechaMinimaReserva.setUTCDate(hoy.getUTCDate() + 2);
+
+  if (fechaVisita < fechaMinimaReserva) {
+    return false;
+  }
+
+  // Verificamos feriados (Navidad y Año Nuevo)
+  
   const navidad = new Date(fechaVisita.getFullYear(), 11, 25);
   const anoNuevo = new Date(fechaVisita.getFullYear(), 0, 1);
 
+  // Normalizamos los feriados para comparar
+  navidad.setUTCHours(0, 0, 0, 0);
+  anoNuevo.setUTCHours(0, 0, 0, 0);
+
+  // usaa getTime() p. hacer la comparacion
   if (
-    fechaVisita.getUTCDate() === navidad.getUTCDate() ||
-    fechaVisita.getUTCDate() === anoNuevo.getUTCDate()
+    fechaVisita.getTime() === navidad.getTime() ||
+    fechaVisita.getTime() === anoNuevo.getTime()
   ) {
     return false;
   }
 
-  // verificamos si la fecha no es lunes (0=domingo, 1=lunes, ..., 6=sábado)
-  if (fechaVisita.getUTCDay() === 1) {
+  // Verifica q nno sea lunes
+  if (fechaVisita.getUTCDay() === 1) { // 1 = Lunes
     return false;
   }
 
+  // Si pasa todas las validaciones
   return true;
 }
 
@@ -51,4 +76,13 @@ export async function validarDisponibilidadCupo(
   const cupoRestante = CUPO_MAXIMO_DIARIO - entradasYaVendidas;
 
   return cantidadSolicitada <= cupoRestante;
+}
+
+// Valida la cantidad de entradas de un pedido
+export function validarCantidadEntradas(pedido: Pedido): boolean {
+  const cantidad = pedido.entradas.length;
+  const MAX_ENTRADAS_POR_PEDIDO = 10;
+
+  // Condición directa, sin ifs innecesarios
+  return cantidad > 0 && cantidad <= MAX_ENTRADAS_POR_PEDIDO;
 }
