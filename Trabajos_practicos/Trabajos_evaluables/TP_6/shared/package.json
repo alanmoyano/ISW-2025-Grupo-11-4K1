@@ -8,6 +8,7 @@
     "dev": "tsc --watch"
   },
   "devDependencies": {
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "@types/bun": "catalog:"
   }
 }

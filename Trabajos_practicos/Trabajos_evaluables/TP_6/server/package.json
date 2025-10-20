@@ -6,14 +6,14 @@
   "scripts": {
     "build": "tsc",
     "dev": "bun --watch run src/index.ts && tsc --watch",
-    "test": "vitest"
+    "test": "bun test"
   },
   "dependencies": {
     "hono": "^4.7.11",
     "shared": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "latest",
+    "@types/bun": "catalog:",
     "vite": "catalog:",
     "vitest": "^3.2.4",
     "typescript": "catalog:"

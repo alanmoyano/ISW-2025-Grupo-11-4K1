@@ -101,7 +101,8 @@
     "turbo.json",
     "package.json",
     "bun.lock",
-    "tsconfig.json"
+    "tsconfig.json",
+    "**/bunfig.toml"
   ],
   "globalEnv": [
     "NODE_ENV",

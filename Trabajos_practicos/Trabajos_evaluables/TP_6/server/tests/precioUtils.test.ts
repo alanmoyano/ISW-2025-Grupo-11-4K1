@@ -1,5 +1,4 @@
-
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { calcularPrecioTotal } from "../src/precioUtils";
 import type { Entrada } from "@shared/types";
 
@@ -9,17 +8,20 @@ type EntradaDesdeCliente = Omit<Entrada, "id" | "precio">;
 
 // El bloque `describe` agrupa todos los tests relacionados con la lógica de precios.
 describe("Lógica de Cálculo de Precios", () => {
-
   // verifica que los menores de 3 años no pagan.
   it("debería devolver 0 para un niño de 3 años o menos", () => {
-    const entradas: EntradaDesdeCliente[] = [{ tipoEntradaId: 1, edadVisitante: 3 }];
+    const entradas: EntradaDesdeCliente[] = [
+      { tipoEntradaId: 1, edadVisitante: 3 },
+    ];
     const resultado = calcularPrecioTotal(entradas);
     expect(resultado).toBe(0);
   });
 
   // verifica el descuento del 50% para niños (hasta 10 años).
   it("debería aplicar 50% de descuento a un niño de 10 años (Regular)", () => {
-    const entradas: EntradaDesdeCliente[] = [{ tipoEntradaId: 1, edadVisitante: 10 }];
+    const entradas: EntradaDesdeCliente[] = [
+      { tipoEntradaId: 1, edadVisitante: 10 },
+    ];
     // Precio Regular: 5000. Descuento 50%: 2500.
     const resultado = calcularPrecioTotal(entradas);
     expect(resultado).toBe(2500);
@@ -27,7 +29,9 @@ describe("Lógica de Cálculo de Precios", () => {
 
   // verificaaa el descuento del 50% para mayores (desde 60 años).
   it("debería aplicar 50% de descuento a un mayor de 60 años (VIP)", () => {
-    const entradas: EntradaDesdeCliente[] = [{ tipoEntradaId: 2, edadVisitante: 60 }];
+    const entradas: EntradaDesdeCliente[] = [
+      { tipoEntradaId: 2, edadVisitante: 60 },
+    ];
     // Precio VIP: 10000. Descuento 50%: 5000.
     const resultado = calcularPrecioTotal(entradas);
     expect(resultado).toBe(5000);
@@ -35,7 +39,9 @@ describe("Lógica de Cálculo de Precios", () => {
 
   // controla el precio completo para un adulto.
   it("debería cobrar el precio completo a un adulto de 30 años (Regular)", () => {
-    const entradas: EntradaDesdeCliente[] = [{ tipoEntradaId: 1, edadVisitante: 30 }];
+    const entradas: EntradaDesdeCliente[] = [
+      { tipoEntradaId: 1, edadVisitante: 30 },
+    ];
     const resultado = calcularPrecioTotal(entradas);
     expect(resultado).toBe(5000);
   });
@@ -45,12 +51,11 @@ describe("Lógica de Cálculo de Precios", () => {
     const entradas: EntradaDesdeCliente[] = [
       { tipoEntradaId: 1, edadVisitante: 35 }, // Regular, adulto: 5000
       { tipoEntradaId: 2, edadVisitante: 65 }, // VIP, mayor: 5000 (50% de 10000)
-      { tipoEntradaId: 1, edadVisitante: 8 },  // Regular, niño: 2500 (50% de 5000)
-      { tipoEntradaId: 1, edadVisitante: 2 },  // Regular, infante: 0
+      { tipoEntradaId: 1, edadVisitante: 8 }, // Regular, niño: 2500 (50% de 5000)
+      { tipoEntradaId: 1, edadVisitante: 2 }, // Regular, infante: 0
     ];
     // Total ¿12500
     const resultado = calcularPrecioTotal(entradas);
     expect(resultado).toBe(12500);
   });
-
 });
