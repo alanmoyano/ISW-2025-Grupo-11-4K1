@@ -8,7 +8,7 @@ export const entradasFormSchema = z.object({
     .min(1, "Debe ingresar una fecha de visita")
     .refine((value) => {
       const date = new Date(value);
-      if (date.getDay() === 1) return false;
+      if (date.getUTCDay() === 1) return false;
       if (diasFestivos.has(value)) return false;
       return true;
     }, {
