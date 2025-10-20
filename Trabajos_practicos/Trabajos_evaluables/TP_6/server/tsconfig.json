@@ -8,9 +8,6 @@
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
 
-    // Types
-    "types": ["bun-types"],
-
     // Output settings
     "declaration": true,
     "outDir": "dist",
