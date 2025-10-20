@@ -16,5 +16,10 @@
     "pnpm.overrides.*",
     "workspaces.catalog",
     "workspaces.catalogs.*"
+  ],
+  "typescript.preferences.autoImportFileExcludePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**"
   ]
 }
