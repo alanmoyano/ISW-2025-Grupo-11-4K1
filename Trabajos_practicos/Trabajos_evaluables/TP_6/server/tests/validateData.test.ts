@@ -89,4 +89,18 @@ describe("Validar cantidad de entradas", () => {
     };
     expect(validarCantidadEntradas(pedido)).toBe(false);
   });
+
+  it("No debe permitir fechas pasadas", () => {
+    const pedidoFechaPasada: Pedido = {
+      idPedido: 3,
+      entradas: [ { id: 1, tipoEntradaId: 2, edadVisitante: 30, precio: 1000, utilizada: false } ],
+      fecha: "2024-10-10", //  fecha en el pasado
+      idFormaDePago: 1,
+      total: 1000,
+      usuarioId: 1,
+    };
+    expect(validarFechaVisita(pedidoFechaPasada)).toBe(false);
+  });
+
+
 });
