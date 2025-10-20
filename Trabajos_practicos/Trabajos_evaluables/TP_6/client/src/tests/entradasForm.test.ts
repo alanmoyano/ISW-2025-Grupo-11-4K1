@@ -49,4 +49,48 @@ describe("Validación del formulario de compra de entradas", () => {
     });
   });
 
+  describe("Cantidad de entradas", () => {
+    it("Debe requerir al menos una entrada", () => {
+      const pedido: Pedido = {
+        idPedido: 1,
+        usuarioId: 1,
+        entradas: [],
+        idFormaDePago: 1,
+       fecha: "2025-10-21",
+        total: 1000,
+      };
+
+      const result = entradasFormSchema.safeParse(pedido);
+      expect(result.success).toBe(false);
+    });
+  })
+
+  it("No debe permitir mas de 10 entradas", () => {
+    const pedido: Pedido = {
+      idPedido: 1,
+      usuarioId: 1,
+      entradas: new Array(11).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
+      idFormaDePago: 1,
+      fecha: "2025-10-21",
+      total: 1000,
+    };
+
+    const result = entradasFormSchema.safeParse(pedido);
+    expect(result.success).toBe(false);
+  });
+
+  it("Debe aceptar una cantidad entre 1 y 10", () => {
+    const pedido: Pedido = {
+      idPedido: 1,
+      usuarioId: 1,
+      entradas: new Array(9).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
+      idFormaDePago: 1,
+      fecha: "2025-10-21",
+      total: 1000,
+    };
+
+    const result = entradasFormSchema.safeParse(pedido);
+    expect(result.success).toBe(true);
+  });
+
 });
