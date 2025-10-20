@@ -12,14 +12,21 @@ export const TipoEntradaEnum = {
   MENOR: 3,
 } as const;
 
-const tipoEntradaLiterals = Object.values(TipoEntradaEnum).map(v => z.literal(v));
+const tipoEntradaLiterals = Object.values(TipoEntradaEnum).map((v) =>
+  z.literal(v),
+);
 
-export const tipoEntradaIdSchema = z.union(tipoEntradaLiterals as [typeof tipoEntradaLiterals[0], ...typeof tipoEntradaLiterals]);
+export const tipoEntradaIdSchema = z.union(
+  tipoEntradaLiterals as [
+    (typeof tipoEntradaLiterals)[0],
+    ...typeof tipoEntradaLiterals,
+  ],
+);
 
 export const tipoEntradaSchema = z.object({
   id: tipoEntradaIdSchema,
   nombre: z.string(),
-  precio: z.number(), 
+  precio: z.number(),
 });
 
 export type TipoEntrada = z.infer<typeof tipoEntradaSchema>;
@@ -37,6 +44,7 @@ export const entradaSchema = z.object({
   edadVisitante: z.number(),
   precio: z.number(),
   utilizada: z.boolean(),
+  pedidoId: z.number(),
 });
 
 export type Entrada = z.infer<typeof entradaSchema>;
