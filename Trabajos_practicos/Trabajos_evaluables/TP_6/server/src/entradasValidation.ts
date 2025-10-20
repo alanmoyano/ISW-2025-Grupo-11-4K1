@@ -53,19 +53,8 @@ export function validarFechaVisita(pedidoVisita: Pedido): boolean {
 // Valida la cantidad de entradas de un pedido
 export function validarCantidadEntradas(pedido: Pedido): boolean {
   const cantidad = pedido.entradas.length;
-
-  // Centralizamos los límites en CUPOS
-  const { MAX_ENTRADAS_POR_PEDIDO } = CUPOS;
+  const MAX_ENTRADAS_POR_PEDIDO = 10;
 
   // Condición directa, sin ifs innecesarios
   return cantidad > 0 && cantidad <= MAX_ENTRADAS_POR_PEDIDO;
-}
-
-// Valida el cupo diario disponible
-export function validarCupoDiario(entradasVendidas: number, nuevasEntradas: number): boolean {
-  const { CUPO_MAXIMO_DIARIO } = CUPOS;
-  const total = entradasVendidas + nuevasEntradas;
-
-  // Devuelve true solo si el total no excede el cupo máximo
-  return total <= CUPO_MAXIMO_DIARIO;
 }

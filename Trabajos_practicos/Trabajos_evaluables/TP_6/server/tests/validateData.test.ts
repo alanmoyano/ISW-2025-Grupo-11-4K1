@@ -2,7 +2,7 @@ import app from "@server/index";
 import type { Pedido } from "@shared/types";
 import { describe, expect, it } from "vitest";
 import { validarFechaVisita } from "@server/entradasValidation";
-import { validarCantidadEntradas, validarCupoDiario } from "@server/entradasValidation";
+import { validarCantidadEntradas} from "@server/entradasValidation";
 
 describe("Validar los datos que se cargan", () => {
   it("La fecha no debe ser un lunes o un dia festivo", async () => {
@@ -42,7 +42,7 @@ describe("Validar los datos que se cargan", () => {
 });
 
 
-describe("Validar cantidad de entradas y cupo diario", () => {
+describe("Validar cantidad de entradas", () => {
   it("Debe rechazar un pedido sin entradas", () => {
     const pedido: Pedido = {
       usuarioId: 1,
@@ -84,11 +84,5 @@ describe("Validar cantidad de entradas y cupo diario", () => {
       total: 75000,
     };
     expect(validarCantidadEntradas(pedido)).toBe(false);
-  });
-
-  it("Debe validar correctamente el cupo diario", () => {
-    expect(validarCupoDiario(90, 5)).toBe(true);  // total = 95
-    expect(validarCupoDiario(95, 5)).toBe(true);  // total = 100
-    expect(validarCupoDiario(95, 6)).toBe(false); // total = 101 → supera cupo
   });
 });
