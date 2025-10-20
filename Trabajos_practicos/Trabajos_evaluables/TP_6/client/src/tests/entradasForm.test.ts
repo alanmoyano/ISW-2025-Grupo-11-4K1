@@ -8,8 +8,9 @@ describe("Validación del formulario de compra de entradas", () => {
 
     it("Debe requerir fecha de visita", () => {
       const pedido: Pedido = {
+        idPedido: 1,
         usuarioId: 1,
-        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000 }],
+        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }],
         idFormaDePago: 1,
         fecha: "",
         total: 1000,
@@ -21,8 +22,9 @@ describe("Validación del formulario de compra de entradas", () => {
 
     it("No se puede seleccionar un lunes", () => {
       const pedido: Pedido = {
+        idPedido: 1,
         usuarioId: 1,
-        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000 }],
+        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }],
         idFormaDePago: 1,
         fecha: "2025-10-20",
         total: 1000,
@@ -34,8 +36,9 @@ describe("Validación del formulario de compra de entradas", () => {
 
     it("No se puede seleccionar un día festivo", () => {
       const pedido: Pedido = {
+        idPedido: 1,
         usuarioId: 1,
-        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000 }],
+        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }],
         idFormaDePago: 1,
         fecha: "2025-12-25",
         total: 1000,
