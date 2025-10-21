@@ -1,7 +1,7 @@
 import { Database } from "bun:sqlite";
 
-export function initDatabase(): Database {
-  const db = new Database("database.sqlite");
+export function initDatabase(dbInstance?: Database): Database {
+  const db = dbInstance || new Database("database.sqlite");
 
   db.run(
     `CREATE TABLE IF NOT EXISTS usuario (
@@ -10,6 +10,11 @@ export function initDatabase(): Database {
         email TEXT UNIQUE NOT NULL
     );`,
   );
+
+  db.run(`
+    INSERT OR IGNORE INTO usuario (id, nombre, email)
+    VALUES (1, 'Usuario de prueba 1', 'example@mail.com')
+  `);
 
   db.run(`
     CREATE TABLE IF NOT EXISTS forma_de_pago (

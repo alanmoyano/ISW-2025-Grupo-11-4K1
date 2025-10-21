@@ -3,6 +3,7 @@ import { testClient } from "hono/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as accesoDB from "../src/dbAccess";
 import type { FormaDePago, Pedido, TipoEntrada, Entrada } from "@shared/types";
+import { eventDispatcher } from "../src/eventDispatcher";
 
 const mockGuardarPedidoDeVisita = vi.spyOn(accesoDB, "guardarPedidoDeVisita");
 const mockGuardarEntradasReferidasAPedido = vi.spyOn(
@@ -18,6 +19,10 @@ vi.mock("../src/dbAccess", () => ({
     // Asegúrate de mockear todos los métodos que tu código original usa
   },
 }));
+
+afterEach(() => {
+  eventDispatcher.removeAllListeners();
+});
 
 const hoy = new Date();
 

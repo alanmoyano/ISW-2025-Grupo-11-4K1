@@ -32,6 +32,10 @@ class EventDispatcher {
       }
     });
   }
+
+  public removeAllListeners() {
+    this.listeners = {};
+  }
 }
 
 // Exportacion Singleton 

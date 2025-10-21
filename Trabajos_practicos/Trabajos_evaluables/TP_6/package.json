@@ -31,6 +31,7 @@
     "format": "biome format . --write"
   },
   "dependencies": {
+    "better-sqlite3": "^12.4.1",
     "hono": "^4.10.1"
   },
   "devDependencies": {
