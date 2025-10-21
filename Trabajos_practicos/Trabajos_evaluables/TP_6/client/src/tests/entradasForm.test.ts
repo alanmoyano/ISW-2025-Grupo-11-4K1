@@ -90,35 +90,34 @@ describe("Validación del formulario de compra de entradas", () => {
       const result = entradasFormSchema.safeParse(pedido);
       expect(result.success).toBe(false);
     });
+    it("No debe permitir mas de 10 entradas", () => {
+      const pedido: Pedido = {
+        idPedido: 1,
+        usuarioId: 1,
+        entradas: new Array(19).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
+        idFormaDePago: 1,
+        fecha: "2025-10-21",
+        total: 1000,
+      };
+
+      const result = entradasFormSchema.safeParse(pedido);
+      expect(result.success).toBe(false);
+    });
+
+    it("Debe aceptar una cantidad entre 1 y 10", () => {
+      const pedido: Pedido = {
+        idPedido: 1,
+        usuarioId: 1,
+        entradas: new Array(9).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
+        idFormaDePago: 1,
+        fecha: "2025-10-23",
+        total: 1000,
+      };
+
+      const result = entradasFormSchema.safeParse(pedido);
+      expect(result.success).toBe(true);
+    });
   })
-
-  it("No debe permitir mas de 10 entradas", () => {
-    const pedido: Pedido = {
-      idPedido: 1,
-      usuarioId: 1,
-      entradas: new Array(19).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
-      idFormaDePago: 1,
-      fecha: "2025-10-21",
-      total: 1000,
-    };
-
-    const result = entradasFormSchema.safeParse(pedido);
-    expect(result.success).toBe(false);
-  });
-
-  it("Debe aceptar una cantidad entre 1 y 10", () => {
-    const pedido: Pedido = {
-      idPedido: 1,
-      usuarioId: 1,
-      entradas: new Array(9).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
-      idFormaDePago: 1,
-      fecha: "2025-10-23",
-      total: 1000,
-    };
-
-    const result = entradasFormSchema.safeParse(pedido);
-    expect(result.success).toBe(true);
-  });
 
   describe("Entrada", () => {
     it("Debe requerir la edad del visitante", () => {
