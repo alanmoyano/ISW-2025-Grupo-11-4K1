@@ -10,7 +10,10 @@ describe("Validación del formulario de compra de entradas", () => {
       const pedido: Pedido = {
         idPedido: 1,
         usuarioId: 1,
-        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }],
+        entradas: [{
+          id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false,
+          pedidoId: 0
+        }],
         idFormaDePago: 1,
         fecha: "",
         total: 1000,
@@ -24,7 +27,10 @@ describe("Validación del formulario de compra de entradas", () => {
       const pedido: Pedido = {
         idPedido: 1,
         usuarioId: 1,
-        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }],
+        entradas: [{
+          id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false,
+          pedidoId: 0
+        }],
         idFormaDePago: 1,
         fecha: "2025-10-20",
         total: 1000,
@@ -38,7 +44,10 @@ describe("Validación del formulario de compra de entradas", () => {
       const pedido: Pedido = {
         idPedido: 1,
         usuarioId: 1,
-        entradas: [{ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }],
+        entradas: [{
+          id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false,
+          pedidoId: 0
+        }],
         idFormaDePago: 1,
         fecha: "2025-12-25",
         total: 1000,
@@ -47,6 +56,7 @@ describe("Validación del formulario de compra de entradas", () => {
       const result = entradasFormSchema.safeParse(pedido);
       expect(result.success).toBe(false);
     });
+
   });
 
   describe("Cantidad de entradas", () => {
@@ -69,7 +79,7 @@ describe("Validación del formulario de compra de entradas", () => {
     const pedido: Pedido = {
       idPedido: 1,
       usuarioId: 1,
-      entradas: new Array(11).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
+      entradas: new Array(19).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
       idFormaDePago: 1,
       fecha: "2025-10-21",
       total: 1000,
@@ -85,7 +95,7 @@ describe("Validación del formulario de compra de entradas", () => {
       usuarioId: 1,
       entradas: new Array(9).fill({ id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false }),
       idFormaDePago: 1,
-      fecha: "2025-10-21",
+      fecha: "2025-10-23",
       total: 1000,
     };
 
