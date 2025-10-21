@@ -140,3 +140,23 @@ export async function guardarEmailEnviado(
   const resultado = query.run(pedidoId, destinatario, asunto, cuerpo, fechaEnvio);
   return resultado.lastInsertRowid as number;
 }
+
+export async function obtenerCantidadEntradasVendidasPorFecha(
+  db: Database,
+  fecha: string,
+): Promise<number> {
+  const query = db.prepare(`
+    SELECT COUNT(e.id) AS total_vendidas
+    FROM entrada e
+    JOIN pedido p ON e.pedido_id = p.id_pedido
+    WHERE p.fecha = ?
+  `);
+
+  const resultado = query.get(fecha) as { total_vendidas: number } | undefined;
+
+  if (!resultado) {
+    return 0;
+  }
+
+  return resultado.total_vendidas;
+}

@@ -4,6 +4,7 @@ const CUPOS = {
   MAX_ENTRADAS_POR_PEDIDO: 10,
   CUPO_MAXIMO_DIARIO: 100,
 };
+
 validarCantidadEntradas;
 export function validarFechaVisita(fecha: string): boolean {
   const fechaVisita = new Date(fecha);
@@ -54,26 +55,15 @@ export function validarFechaVisita(fecha: string): boolean {
 
 const CUPO_MAXIMO_DIARIO = 100;
 
-async function getEntradasVendidasPorFecha(fecha: string): Promise<number> {
-  // Ejemplo mockeado
-  if (fecha === "2025-11-05") {
-    return 98; // Simulamos que ya se vendieron 98 esa fecha
-  }
-  return 50; // Simulamos que ya se vendieron 50 en otras fechas
-}
-
 export async function validarDisponibilidadCupo(
-  pedido: Pedido,
-  fetchEntradasVendidas: (fecha: string) => Promise<number>,
+  fecha: string,
+  cantidadSolicitada: number,
+  fetchEntradasVendidas: (fecha: string) => Promise<number>
 ): Promise<boolean> {
-  const { fecha, entradas } = pedido;
-  const cantidadSolicitada = entradas.length;
-
-  if (cantidadSolicitada === 0) {
+  if (cantidadSolicitada <= 0) {
     return false;
   }
 
-  // Obtenemos las entradas ya vendidas usando la funcion que nos pasaron
   const entradasYaVendidas = await fetchEntradasVendidas(fecha);
   const cupoRestante = CUPO_MAXIMO_DIARIO - entradasYaVendidas;
 

@@ -6,6 +6,7 @@ import {
   guardarPedidoDeVisita,
   obtenerFormasDePago,
   obtenerTiposDeEntrada,
+  obtenerCantidadEntradasVendidasPorFecha,
 } from "./dbAccess";
 import { initDatabase } from "./dbDefinition";
 import type { BodyPostPedidoSchema } from "shared/dist";
@@ -17,6 +18,7 @@ import {
 import {
   validarCantidadEntradas,
   validarFechaVisita,
+  validarDisponibilidadCupo,
 } from "./entradasValidation";
 import { eventDispatcher } from "./eventDispatcher";
 import { SimulatedNotificacionService } from "./notificaciones/simulated-notificacion.service";
@@ -24,7 +26,7 @@ import { EnviarEmailConfirmacionListener } from "./notificaciones/enviar-email-c
 
 const db = initDatabase();
 
-const notificacionService = new SimulatedNotificacionService({ silent: true }); // true para no imprimir en consola
+const notificacionService = new SimulatedNotificacionService(); // { silent: true } para no imprimir en consola
 const emailListener = new EnviarEmailConfirmacionListener(db, notificacionService);
 emailListener.setup();
 
@@ -118,6 +120,28 @@ export const app = new Hono()
           null,
           false,
           "La fecha de visita no cumple con las condiciones de reserva",
+        ),
+        { status: 400 },
+      );
+    }
+
+    // Validacion de cupos
+    const cantidadSolicitada = body.entradas.length;
+    const fetcherEntradasVendidas = (f: string) => 
+      obtenerCantidadEntradasVendidasPorFecha(db, f);
+
+    const tieneCupo = await validarDisponibilidadCupo(
+      fecha,
+      cantidadSolicitada,
+      fetcherEntradasVendidas
+    );
+    
+    if (!tieneCupo) {
+      return c.json(
+        buildApiResponse(
+          null,
+          false,
+          "No hay cupo disponible para la fecha seleccionada."
         ),
         { status: 400 },
       );
