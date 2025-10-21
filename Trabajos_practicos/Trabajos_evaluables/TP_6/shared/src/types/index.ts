@@ -36,10 +36,13 @@ export const FormaPagoEnum = {
   TARJETA: 2,
 } as const;
 
-const formaPagoLiterals = Object.values(FormaPagoEnum).map(v => z.literal(v));
+const formaPagoLiterals = Object.values(FormaPagoEnum).map((v) => z.literal(v));
 
 export const idFormaPagoSchema = z.union(
-  formaPagoLiterals as [typeof formaPagoLiterals[0], ...typeof formaPagoLiterals]
+  formaPagoLiterals as [
+    (typeof formaPagoLiterals)[0],
+    ...typeof formaPagoLiterals,
+  ],
 );
 
 export const formaDePagoSchema = z.object({
@@ -80,7 +83,7 @@ export const usuarioSchema = z.object({
 export type Usuario = z.infer<typeof usuarioSchema>;
 
 export const BodyPostPedidoSchema = z.object({
-  idFormaDePago: z.number(),
+  idFormaDePago: z.literal(1).or(z.literal(2)),
   fecha: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "El formato de fecha debe ser YYYY-MM-DD"),

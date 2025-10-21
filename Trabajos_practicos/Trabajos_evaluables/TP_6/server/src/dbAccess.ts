@@ -49,7 +49,7 @@ export async function obtenerFormasDePago(
 export async function guardarPedidoDeVisita(
   db: Database,
   idUsuario: number,
-  idFormaDePago: number,
+  idFormaDePago: 1 | 2,
   fecha: string,
   total: number,
 ): Promise<Pedido> {
@@ -74,7 +74,7 @@ export async function guardarPedidoDeVisita(
 export async function guardarEntradasReferidasAPedido(
   db: Database,
   idPedido: number,
-  tipoEntradaId: 1 | 2 | 3, 
+  tipoEntradaId: 1 | 2 | 3,
   edadVisitante: number,
   precio: number,
 ): Promise<Entrada> {
@@ -82,7 +82,13 @@ export async function guardarEntradasReferidasAPedido(
     db.prepare(`INSERT INTO entrada (pedido_id, tipo_entrada_id, edad_visitante, precio, utilizada)
     VALUES (?, ?, ?, ?, ?)`);
 
-  const resultado = query.run(idPedido, tipoEntradaId, edadVisitante, precio, false);
+  const resultado = query.run(
+    idPedido,
+    tipoEntradaId,
+    edadVisitante,
+    precio,
+    false,
+  );
 
   const nuevaEntrada: Entrada = {
     id: resultado.lastInsertRowid as number,

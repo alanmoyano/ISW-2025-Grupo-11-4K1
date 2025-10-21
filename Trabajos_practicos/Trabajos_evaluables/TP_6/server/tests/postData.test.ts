@@ -20,7 +20,7 @@ vi.mock("../src/dbAccess", () => ({
 }));
 
 const Manana = new Date(Date.now() + 43200000);
-const MananaStr = Manana.toISOString().split("T").length > 0 ? Manana.toISOString().split("T")[0] : "";
+const MananaStr: string = Manana.toISOString().split("T")[0] || "2025-10-31";
 
 describe("Post Data tests", () => {
   const PedidoValidoEsperadoEfectivo: Pedido = {
