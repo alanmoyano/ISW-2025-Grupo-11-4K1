@@ -19,8 +19,12 @@ vi.mock("../src/dbAccess", () => ({
   },
 }));
 
-const Manana = new Date(Date.now() + 43200000);
-const MananaStr: string = Manana.toISOString().split("T")[0] || "2025-10-31";
+const hoy = new Date();
+
+const Manana = new Date(hoy.getTime() + 86400000);
+const Ayer = new Date(hoy.getTime() - 86400000);
+const MananaStr: string = Manana.toISOString().split("T")[0] || "2025-10-22";
+const AyerStr: string = Ayer.toISOString().split("T")[0] || "2025-10-29";
 
 describe("Post Data tests", () => {
   const PedidoValidoEsperadoEfectivo: Pedido = {
@@ -99,8 +103,6 @@ describe("Post Data tests", () => {
           {
             tipoEntradaId: 1,
             edadVisitante: 30,
-            precio: 5000,
-            utilizada: false,
           },
         ],
       },
@@ -133,8 +135,6 @@ describe("Post Data tests", () => {
           {
             tipoEntradaId: 1,
             edadVisitante: 30,
-            precio: 5000,
-            utilizada: false,
           },
         ],
         numeroTarjeta: 1234556789012345,
@@ -158,8 +158,6 @@ describe("Post Data tests", () => {
           {
             tipoEntradaId: 1,
             edadVisitante: 30,
-            precio: 5000,
-            utilizada: false,
           },
         ],
         numeroTarjeta: 1234556789012345,
@@ -168,6 +166,63 @@ describe("Post Data tests", () => {
       },
     });
     expect(respone.status).toBe(402);
+    const { data, success } = await respone.json();
+
+    expect(data).toEqual(null);
+    expect(success).toBe(false);
+  });
+
+  it(`Deberia fallar al intentar crear un pedido en una fecha anterior al dia actual,
+    no devolviendo ningun objeto y el status 400`, async () => {
+    const respone = await testClient(app).pedido.$post({
+      json: {
+        idFormaDePago: 1,
+        fecha: AyerStr,
+        entradas: [
+          {
+            tipoEntradaId: 1,
+            edadVisitante: 30,
+          },
+        ],
+      },
+    });
+    expect(respone.status).toBe(400);
+    const { data, success } = await respone.json();
+
+    expect(data).toEqual(null);
+    expect(success).toBe(false);
+  });
+  it(`Deberia fallar al intentar crear un pedido sin seleccionar forma de pago,
+    no devolviendo ningun objeto y el status 400`, async () => {
+    const respone = await testClient(app).pedido.$post({
+      json: {
+        fecha: AyerStr,
+        entradas: [
+          {
+            tipoEntradaId: 1,
+            edadVisitante: 30,
+          },
+        ],
+      },
+    });
+    expect(respone.status).toBe(400);
+    const { data, success } = await respone.json();
+
+    expect(data).toEqual(null);
+    expect(success).toBe(false);
+  });
+  it(`Deberia fallar al intentar crear un pedido con 11 entradas seleccionadas,
+    no devolviendo ningun objeto y el status 400`, async () => {
+    const respone = await testClient(app).pedido.$post({
+      json: {
+        fecha: AyerStr,
+        entradas: Array(11).fill({
+          tipoEntradaId: 1,
+          edadVisitante: 30,
+        }),
+      },
+    });
+    expect(respone.status).toBe(400);
     const { data, success } = await respone.json();
 
     expect(data).toEqual(null);
