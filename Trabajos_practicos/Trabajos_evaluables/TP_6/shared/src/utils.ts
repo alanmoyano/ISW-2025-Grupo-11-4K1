@@ -1,10 +1,12 @@
 import {
+  BodyPostPedidoSchema,
   entradaSchema,
   formaDePagoSchema,
   pedidoSchema,
   tipoEntradaSchema,
   usuarioSchema,
   type ApiResponse,
+  type BodyPostPedido,
   type Entrada,
   type FormaDePago,
   type Pedido,
@@ -15,7 +17,7 @@ import {
 export function buildApiResponse<T>(
   data: T,
   success: boolean,
-  message?: string
+  message?: string,
 ): ApiResponse<T> {
   return { data, message, success };
 }
@@ -38,4 +40,8 @@ export function isPedido(value: unknown): value is Pedido {
 
 export function isUsuario(value: unknown): value is Usuario {
   return usuarioSchema.safeParse(value).success;
+}
+
+export function isBodyPostPedido(value: unknown): value is BodyPostPedido {
+  return BodyPostPedidoSchema.safeParse(value).success;
 }

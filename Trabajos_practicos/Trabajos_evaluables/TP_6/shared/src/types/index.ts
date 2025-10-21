@@ -78,3 +78,19 @@ export const usuarioSchema = z.object({
 });
 
 export type Usuario = z.infer<typeof usuarioSchema>;
+
+export const BodyPostPedidoSchema = z.object({
+  idFormaDePago: z.number(),
+  fecha: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "El formato de fecha debe ser YYYY-MM-DD"),
+  entradas: z
+    .array(entradaSchema.omit({ pedidoId: true, id: true }))
+    .min(1, "Debe haber al menos una entrada")
+    .max(10, "No puede comprar más de 10 entradas"),
+  numeroTarjeta: z.number().optional(),
+  fechaVencimiento: z.string().optional(),
+  codigoSeguridad: z.number().optional(),
+});
+
+export type BodyPostPedido = z.infer<typeof BodyPostPedidoSchema>;
