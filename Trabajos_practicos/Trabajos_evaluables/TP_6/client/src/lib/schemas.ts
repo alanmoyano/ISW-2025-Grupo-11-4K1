@@ -21,4 +21,9 @@ export const entradasFormSchema = z.object({
     .array(entradaFormSchema)
     .min(1, "Debe ingresar al menos una entrada")
     .max(10, "No puede comprar más de 10 entradas"),
+  idFormaDePago: z
+    .number({ message: "Debe seleccionar una forma de pago" })
+    .refine((val) => [1, 2, 3].includes(val), {
+      message: "La forma de pago es inválida",
+    }),
 });
