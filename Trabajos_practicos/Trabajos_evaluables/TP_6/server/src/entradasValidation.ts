@@ -4,9 +4,8 @@ const CUPOS = {
   MAX_ENTRADAS_POR_PEDIDO: 10,
   CUPO_MAXIMO_DIARIO: 100,
 };
-
-export function validarFechaVisita(pedidoVisita: Pedido): boolean {
-  const { fecha } = pedidoVisita;
+validarCantidadEntradas;
+export function validarFechaVisita(fecha: string): boolean {
   const fechaVisita = new Date(fecha);
 
   // Normalizam la fecha de visita a medianoche
@@ -17,15 +16,17 @@ export function validarFechaVisita(pedidoVisita: Pedido): boolean {
   hoy.setUTCHours(0, 0, 0, 0);
 
   // Verificamos la antelación mínima de 2 días
-  const fechaMinimaReserva = new Date(hoy);
-  fechaMinimaReserva.setUTCDate(hoy.getUTCDate() + 2);
+  const fechaMaximaReserva = new Date(hoy);
+  fechaMaximaReserva.setUTCDate(hoy.getUTCDate() + 2);
+  const fechaAyer = new Date(hoy);
+  fechaAyer.setUTCDate(hoy.getUTCDate() - 1);
 
-  if (fechaVisita < fechaMinimaReserva) {
+  if (fechaVisita > fechaMaximaReserva || fechaVisita <= fechaAyer) {
     return false;
   }
 
   // Verificamos feriados (Navidad y Año Nuevo)
-  
+
   const navidad = new Date(fechaVisita.getFullYear(), 11, 25);
   const anoNuevo = new Date(fechaVisita.getFullYear(), 0, 1);
 
@@ -42,7 +43,8 @@ export function validarFechaVisita(pedidoVisita: Pedido): boolean {
   }
 
   // Verifica q nno sea lunes
-  if (fechaVisita.getUTCDay() === 1) { // 1 = Lunes
+  if (fechaVisita.getUTCDay() === 1) {
+    // 1 = Lunes
     return false;
   }
 
@@ -62,13 +64,13 @@ async function getEntradasVendidasPorFecha(fecha: string): Promise<number> {
 
 export async function validarDisponibilidadCupo(
   pedido: Pedido,
-  fetchEntradasVendidas: (fecha: string) => Promise<number>
+  fetchEntradasVendidas: (fecha: string) => Promise<number>,
 ): Promise<boolean> {
   const { fecha, entradas } = pedido;
   const cantidadSolicitada = entradas.length;
 
   if (cantidadSolicitada === 0) {
-    return false; 
+    return false;
   }
 
   // Obtenemos las entradas ya vendidas usando la funcion que nos pasaron
@@ -79,8 +81,8 @@ export async function validarDisponibilidadCupo(
 }
 
 // Valida la cantidad de entradas de un pedido
-export function validarCantidadEntradas(pedido: Pedido): boolean {
-  const cantidad = pedido.entradas.length;
+export function validarCantidadEntradas(entradas: Entrada[]): boolean {
+  const cantidad = entradas.length;
   const MAX_ENTRADAS_POR_PEDIDO = 10;
 
   // Condición directa, sin ifs innecesarios
