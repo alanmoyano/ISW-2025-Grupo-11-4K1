@@ -52,6 +52,18 @@ export function initDatabase(): Database {
         FOREIGN KEY (pedido_id) REFERENCES pedido(id_pedido),
         FOREIGN KEY (tipo_entrada_id) REFERENCES tipo_entrada(id)
     );`);
+    db.run(`
+    CREATE TABLE IF NOT EXISTS mail_enviados (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        pedido_id INTEGER NOT NULL,
+        destinatario TEXT NOT NULL,
+        asunto TEXT NOT NULL,
+        cuerpo TEXT NOT NULL,
+        fecha_envio TEXT NOT NULL,
+        
+        -- Clave Foránea al Pedido
+        FOREIGN KEY (pedido_id) REFERENCES pedido(id_pedido)
+    );`);
 
   return db;
 }

@@ -18,8 +18,15 @@ import {
   validarCantidadEntradas,
   validarFechaVisita,
 } from "./entradasValidation";
+import { eventDispatcher } from "./eventDispatcher";
+import { SimulatedNotificacionService } from "./notificaciones/simulated-notificacion.service";
+import { EnviarEmailConfirmacionListener } from "./notificaciones/enviar-email-confirmacion.listener";
 
 const db = initDatabase();
+
+const notificacionService = new SimulatedNotificacionService();
+const emailListener = new EnviarEmailConfirmacionListener(db, notificacionService);
+emailListener.setup();
 
 export const app = new Hono()
 
@@ -163,6 +170,9 @@ export const app = new Hono()
       );
       pedidoADevolver.entradas.push(nuevaEntrada);
     }
+
+    // Disparador de evento para notificaciones
+    eventDispatcher.dispatch("pedido:generado", pedidoADevolver);
 
     return c.json(
       buildApiResponse(pedidoADevolver, true, "Objetos creados con exito"),

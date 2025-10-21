@@ -1,6 +1,6 @@
 import type Database from "bun:sqlite";
-import type { Entrada, FormaDePago, Pedido, TipoEntrada } from "@shared/types";
-import { isFormaDePago, isTipoEntrada } from "@shared/utils";
+import type { Entrada, FormaDePago, Pedido, TipoEntrada, Usuario } from "@shared/types";
+import { isFormaDePago, isTipoEntrada, isUsuario } from "@shared/utils";
 import { calcularPrecioEntrada } from "./precioUtils";
 
 export async function obtenerTiposDeEntrada(
@@ -104,4 +104,39 @@ export async function guardarEntradasReferidasAPedido(
   nuevaEntrada.id = resultado.lastInsertRowid as number;
 
   return nuevaEntrada;
+}
+
+export async function obtenerUsuarioPorId(
+  db: Database,
+  id: number,
+): Promise<Usuario | null> {
+  const query = db.prepare("SELECT * FROM usuario WHERE id = ?");
+  const resultado = query.get(id);
+
+  if (!resultado) {
+    return null;
+  }
+  if (isUsuario(resultado)) {
+    return resultado;
+  }
+  
+  return null;
+}
+
+export async function guardarEmailEnviado(
+  db: Database,
+  pedidoId: number,
+  destinatario: string,
+  asunto: string,
+  cuerpo: string,
+): Promise<number> {
+  const fechaEnvio = new Date().toISOString();
+  
+  const query = db.prepare(`
+    INSERT INTO mail_enviados (pedido_id, destinatario, asunto, cuerpo, fecha_envio)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+  
+  const resultado = query.run(pedidoId, destinatario, asunto, cuerpo, fechaEnvio);
+  return resultado.lastInsertRowid as number;
 }
