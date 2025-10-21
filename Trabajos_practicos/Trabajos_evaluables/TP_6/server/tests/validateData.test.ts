@@ -43,8 +43,8 @@ describe("Validar los datos que se cargan", () => {
       usuarioId: 1,
     };
 
-    expect(validarFechaVisita(pedidoVisita)).toBe(false);
-    expect(validarFechaVisita(pedidoVisita2)).toBe(false);
+    expect(validarFechaVisita(pedidoVisita.fecha)).toBe(false);
+    expect(validarFechaVisita(pedidoVisita2.fecha)).toBe(false);
   });
 });
 
@@ -58,7 +58,7 @@ describe("Validar cantidad de entradas", () => {
       fecha: "2025-12-27",
       total: 0,
     };
-    expect(validarCantidadEntradas(pedido)).toBe(false);
+    expect(validarCantidadEntradas(pedido.entradas)).toBe(false);
   });
 
   it("Debe aceptar un pedido con 1 a 10 entradas", () => {
@@ -76,7 +76,7 @@ describe("Validar cantidad de entradas", () => {
       fecha: "2025-12-27",
       total: 15000,
     };
-    expect(validarCantidadEntradas(pedido)).toBe(true);
+    expect(validarCantidadEntradas(pedido.entradas)).toBe(true);
   });
 
   it("Debe rechazar un pedido con más de 10 entradas", () => {
@@ -94,7 +94,7 @@ describe("Validar cantidad de entradas", () => {
       fecha: "2025-12-27",
       total: 75000,
     };
-    expect(validarCantidadEntradas(pedido)).toBe(false);
+    expect(validarCantidadEntradas(pedido.entradas)).toBe(false);
   });
 
   it("No debe permitir fechas pasadas", () => {
@@ -115,6 +115,6 @@ describe("Validar cantidad de entradas", () => {
       total: 1000,
       usuarioId: 1,
     };
-    expect(validarFechaVisita(pedidoFechaPasada)).toBe(false);
+    expect(validarFechaVisita(pedidoFechaPasada.fecha)).toBe(false);
   });
 });
