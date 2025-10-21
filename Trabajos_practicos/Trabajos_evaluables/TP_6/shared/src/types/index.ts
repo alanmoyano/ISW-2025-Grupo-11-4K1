@@ -88,7 +88,7 @@ export const BodyPostPedidoSchema = z.object({
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "El formato de fecha debe ser YYYY-MM-DD"),
   entradas: z
-    .array(entradaSchema.omit({ pedidoId: true, id: true }))
+    .array(entradaSchema.omit({ pedidoId: true, id: true, utilizada: true, precio: true }))
     .min(1, "Debe haber al menos una entrada")
     .max(10, "No puede comprar más de 10 entradas"),
   numeroTarjeta: z.number().optional(),
