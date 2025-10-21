@@ -18,6 +18,7 @@ export const entradasFormSchema = z.object({
     .refine((value) => {
       const date = new Date(value);
       if (date.getUTCDay() === 1) return false;
+      if (date < new Date()) return false;
       if (diasFestivos.has(value)) return false;
       return true;
     }, {
