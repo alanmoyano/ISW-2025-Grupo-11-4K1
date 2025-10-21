@@ -54,3 +54,8 @@ export function calcularPrecioTotal(entradas: EntradaDesdeCliente[]): number {
     0, 
   );
 }
+
+export function obtenerAutorizacionMercadoPago(funciona: boolean): boolean { 
+  // Aca pondriamos la conexion con la API de MercadoPago, SI TUVIERA UNA!!!
+  return funciona;
+}
