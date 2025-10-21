@@ -63,6 +63,22 @@ export const app = new Hono()
       );
     }
 
+    if (entradas.length === 0 || entradas.length > 10) {
+  return c.json(
+    buildApiResponse(null, false, "La cantidad de entradas debe ser entre 1 y 10."),
+    { status: 400 },
+  );
+}
+
+for (const entrada of entradas) {
+  if (entrada.edadVisitante < 0 || entrada.edadVisitante > 110) {
+    return c.json(
+      buildApiResponse(null, false, `La edad '${entrada.edadVisitante}' no es válida.`),
+      { status: 400 },
+    );
+  }
+}
+
     const { idFormaDePago, fecha, entradas } = body;
 
     if (idFormaDePago === 2) {
