@@ -10,8 +10,14 @@ import {
 import { initDatabase } from "./dbDefinition";
 import type { BodyPostPedidoSchema } from "shared/dist";
 import type { BodyPostPedido, Entrada, Pedido } from "@shared/types";
-import { obtenerAutorizacionMercadoPago } from "./precioUtils";
-import type { b } from "vitest/dist/chunks/mocker.d.BE_2ls6u.js";
+import {
+  calcularPrecioTotal,
+  obtenerAutorizacionMercadoPago,
+} from "./precioUtils";
+import {
+  validarCantidadEntradas,
+  validarFechaVisita,
+} from "./entradasValidation";
 
 const db = initDatabase();
 
@@ -63,24 +69,21 @@ export const app = new Hono()
       );
     }
 
-    if (entradas.length === 0 || entradas.length > 10) {
-  return c.json(
-    buildApiResponse(null, false, "La cantidad de entradas debe ser entre 1 y 10."),
-    { status: 400 },
-  );
-}
-
-for (const entrada of entradas) {
-  if (entrada.edadVisitante < 0 || entrada.edadVisitante > 110) {
-    return c.json(
-      buildApiResponse(null, false, `La edad '${entrada.edadVisitante}' no es válida.`),
-      { status: 400 },
-    );
-  }
-}
-
     const { idFormaDePago, fecha, entradas } = body;
 
+    for (const entrada of entradas) {
+      if (entrada.edadVisitante < 0 || entrada.edadVisitante > 110) {
+        return c.json(
+          buildApiResponse(
+            null,
+            false,
+            `La edad '${entrada.edadVisitante}' no es válida.`,
+          ),
+          { status: 400 },
+        );
+      }
+    }
+    // Validamos que, de usar una tarjeta para pagar, el pago sea autorizado por mercado pago
     if (idFormaDePago === 2) {
       let autorizacion: boolean;
       const { numeroTarjeta, fechaVencimiento, codigoSeguridad } = body;
@@ -99,10 +102,46 @@ for (const entrada of entradas) {
 
     let pedidoADevolver: Pedido | null = null;
 
-    let total = 0;
+    // Validamos que la fecha ingresada se encuentre disponible segun las reglas de negocio
+    // (Con maximo 2 dias de antelacion, no feriados, no lunes, cupo maximo diario)
 
-    for (const entrada of entradas) {
-      total += entrada.precio;
+    if (!validarFechaVisita(fecha)) {
+      return c.json(
+        buildApiResponse(
+          null,
+          false,
+          "La fecha de visita no cumple con las condiciones de reserva",
+        ),
+        { status: 400 },
+      );
+    }
+
+    // Validamos que la cantidad de entradas solicitadas no supere el cupo maximo por compra
+    let arrayValidadorEntradas: Entrada[] = [];
+    let totalPedido = 0;
+    for (let entrada of entradas) {
+      const entradadValidadora: Entrada = {
+        id: 0,
+        tipoEntradaId: entrada.tipoEntradaId,
+        edadVisitante: entrada.edadVisitante,
+        precio: 0,
+        utilizada: false,
+        pedidoId: 0,
+      };
+      arrayValidadorEntradas.push(entradadValidadora);
+    }
+
+    totalPedido += calcularPrecioTotal(arrayValidadorEntradas);
+
+    if (!validarCantidadEntradas(arrayValidadorEntradas)) {
+      return c.json(
+        buildApiResponse(
+          null,
+          false,
+          "Se excede la cantidad maxima de entradas por pedido",
+        ),
+        { status: 400 },
+      );
     }
 
     const pedido: Pedido = await guardarPedidoDeVisita(
@@ -110,7 +149,7 @@ for (const entrada of entradas) {
       1,
       idFormaDePago,
       fecha,
-      total,
+      totalPedido,
     );
 
     pedidoADevolver = pedido;
@@ -121,7 +160,6 @@ for (const entrada of entradas) {
         pedido.idPedido,
         entrada.tipoEntradaId,
         entrada.edadVisitante,
-        entrada.precio,
       );
       pedidoADevolver.entradas.push(nuevaEntrada);
     }
