@@ -190,7 +190,7 @@ describe("Validación del formulario de compra de entradas", () => {
     });
 
     it("Debe fallar si la forma de pago es invalida", () => {
-      const pedido : Pedido = {
+      const pedido = {
         idPedido: 1,
         usuarioId: 1,
         entradas: [{
