@@ -57,6 +57,23 @@ describe("Validación del formulario de compra de entradas", () => {
       expect(result.success).toBe(false);
     });
 
+    it("Debe ser del dia actual o futuro", () => {
+      const pedido: Pedido = {
+        idPedido: 1,
+        usuarioId: 1,
+        entradas: [{
+          id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false,
+          pedidoId: 0
+        }],
+        idFormaDePago: 1,
+        fecha: "2025-08-16",
+        total: 1000,
+      };
+    
+      const result = entradasFormSchema.safeParse(pedido);
+      expect(result.success).toBe(false);
+    })
+
   });
 
   describe("Cantidad de entradas", () => {
