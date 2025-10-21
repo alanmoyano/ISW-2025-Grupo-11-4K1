@@ -24,7 +24,7 @@ import { EnviarEmailConfirmacionListener } from "./notificaciones/enviar-email-c
 
 const db = initDatabase();
 
-const notificacionService = new SimulatedNotificacionService();
+const notificacionService = new SimulatedNotificacionService({ silent: true }); // true para no imprimir en consola
 const emailListener = new EnviarEmailConfirmacionListener(db, notificacionService);
 emailListener.setup();
 
