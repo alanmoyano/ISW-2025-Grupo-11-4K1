@@ -31,8 +31,19 @@ export const tipoEntradaSchema = z.object({
 
 export type TipoEntrada = z.infer<typeof tipoEntradaSchema>;
 
+export const FormaPagoEnum = {
+  EFECTIVO: 1,
+  TARJETA: 2,
+} as const;
+
+const formaPagoLiterals = Object.values(FormaPagoEnum).map(v => z.literal(v));
+
+export const idFormaPagoSchema = z.union(
+  formaPagoLiterals as [typeof formaPagoLiterals[0], ...typeof formaPagoLiterals]
+);
+
 export const formaDePagoSchema = z.object({
-  id: z.number(),
+  id: idFormaPagoSchema,
   nombre: z.string(),
 });
 
@@ -53,7 +64,7 @@ export const pedidoSchema = z.object({
   idPedido: z.number(),
   usuarioId: z.number(),
   entradas: z.array(entradaSchema),
-  idFormaDePago: z.number(),
+  idFormaDePago: idFormaPagoSchema,
   fecha: z.string(),
   total: z.number(),
 });
