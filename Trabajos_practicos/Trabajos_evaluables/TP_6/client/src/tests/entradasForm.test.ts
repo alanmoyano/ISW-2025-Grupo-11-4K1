@@ -1,11 +1,10 @@
 import { expect, describe, it } from "vitest"
-import { Pedido } from "@shared/types"
+import { Entrada, Pedido } from "@shared/types"
 import { entradaFormSchema, entradasFormSchema } from "../lib/schemas.ts";
 
 describe("Validación del formulario de compra de entradas", () => {
 
   describe("Fecha de visita", () => {
-
     it("Debe requerir fecha de visita", () => {
       const pedido: Pedido = {
         idPedido: 1,
@@ -73,7 +72,6 @@ describe("Validación del formulario de compra de entradas", () => {
       const result = entradasFormSchema.safeParse(pedido);
       expect(result.success).toBe(false);
     })
-
   });
 
   describe("Cantidad de entradas", () => {
@@ -149,13 +147,19 @@ describe("Validación del formulario de compra de entradas", () => {
     });
 
     it("Debe fallar si la edad es negativa", () => {
-      const entrada = { id: 1, tipoEntradaId: 1, edadVisitante: -3, precio: 1000, utilizada: false};
+      const entrada : Entrada = {
+        id: 1, tipoEntradaId: 1, edadVisitante: -3, precio: 1000, utilizada: false,
+        pedidoId: 0
+      };
       const result = entradaFormSchema.safeParse(entrada);
       expect(result.success).toBe(false);
     });
 
     it("Debe fallar si la edad supera los 110 años", () => {
-      const entrada = { id: 1, tipoEntradaId: 1, edadVisitante: 111, precio: 1000, utilizada: false};
+      const entrada : Entrada = {
+        id: 1, tipoEntradaId: 1, edadVisitante: 111, precio: 1000, utilizada: false,
+        pedidoId: 0
+      };
       const result = entradaFormSchema.safeParse(entrada);
       expect(result.success).toBe(false);
     });
@@ -165,7 +169,58 @@ describe("Validación del formulario de compra de entradas", () => {
       const result = entradaFormSchema.safeParse(entrada);
       expect(result.success).toBe(false);
     });
-    
   })
 
+  describe("Forma de pago", () => {
+    it("Debe aceptar una forma de pago valida", () => {
+      const pedido : Pedido = {
+        idPedido: 1,
+        usuarioId: 1,
+        entradas: [{
+          id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false,
+          pedidoId: 0
+        }],
+        idFormaDePago: 1,
+        fecha: "2025-10-21",
+        total: 1000,
+      };
+
+      const result = entradasFormSchema.safeParse(pedido);
+      expect(result.success).toBe(true);
+    });
+
+    it("Debe fallar si la forma de pago es invalida", () => {
+      const pedido : Pedido = {
+        idPedido: 1,
+        usuarioId: 1,
+        entradas: [{
+          id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false,
+          pedidoId: 0
+        }],
+        idFormaDePago: 99,
+        fecha: "2025-10-21",
+        total: 1000,
+      };
+
+      const result = entradasFormSchema.safeParse(pedido);
+      expect(result.success).toBe(false);
+    });
+  })
+
+  it("Debe requerir una forma de pago", () => {
+    const pedido = {
+      idPedido: 1,
+      usuarioId: 1,
+      entradas: [{
+        id: 1, tipoEntradaId: 1, edadVisitante: 30, precio: 1000, utilizada: false,
+        pedidoId: 0
+      }],
+      idFormaDePago: null,
+      fecha: "2025-10-23",
+      total: 1000,
+    };
+
+    const result = entradasFormSchema.safeParse(pedido);
+    expect(result.success).toBe(false);
+  })
 });
