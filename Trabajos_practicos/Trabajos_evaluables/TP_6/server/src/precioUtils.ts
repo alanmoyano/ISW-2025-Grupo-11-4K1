@@ -24,7 +24,7 @@ type EntradaDesdeCliente = Omit<Entrada, "id" | "precio">;
  * @param entrada La entrada a calcular.
  * @returns El precio final de la entrada.
  */
-function calcularPrecioEntrada(entrada: EntradaDesdeCliente): number {
+export function calcularPrecioEntrada(entrada: EntradaDesdeCliente): number {
   const precioBase = PRECIOS_BASE[entrada.tipoEntradaId as keyof typeof PRECIOS_BASE];
 
   // REQUISITO: Menores o iguales a 3 años no pagan.

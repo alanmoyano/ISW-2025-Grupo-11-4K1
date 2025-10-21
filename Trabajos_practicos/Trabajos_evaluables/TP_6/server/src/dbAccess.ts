@@ -1,6 +1,7 @@
 import type Database from "bun:sqlite";
 import type { Entrada, FormaDePago, Pedido, TipoEntrada } from "@shared/types";
 import { isFormaDePago, isTipoEntrada } from "@shared/utils";
+import { calcularPrecioEntrada } from "./precioUtils";
 
 export async function obtenerTiposDeEntrada(
   db: Database,
@@ -76,28 +77,31 @@ export async function guardarEntradasReferidasAPedido(
   idPedido: number,
   tipoEntradaId: 1 | 2 | 3,
   edadVisitante: number,
-  precio: number,
 ): Promise<Entrada> {
   const query =
     db.prepare(`INSERT INTO entrada (pedido_id, tipo_entrada_id, edad_visitante, precio, utilizada)
     VALUES (?, ?, ?, ?, ?)`);
+  
+  const nuevaEntrada: Entrada = {
+    id: 0,
+    tipoEntradaId: tipoEntradaId,
+    edadVisitante: edadVisitante,
+    precio: 0,
+    utilizada: false,
+    pedidoId: idPedido,
+  };
+
+  nuevaEntrada.precio = calcularPrecioEntrada(nuevaEntrada);
 
   const resultado = query.run(
     idPedido,
     tipoEntradaId,
     edadVisitante,
-    precio,
+    nuevaEntrada.precio,
     false,
   );
 
-  const nuevaEntrada: Entrada = {
-    id: resultado.lastInsertRowid as number,
-    tipoEntradaId: tipoEntradaId,
-    edadVisitante: edadVisitante,
-    precio: precio,
-    utilizada: false,
-    pedidoId: idPedido,
-  };
+  nuevaEntrada.id = resultado.lastInsertRowid as number;
 
   return nuevaEntrada;
 }
