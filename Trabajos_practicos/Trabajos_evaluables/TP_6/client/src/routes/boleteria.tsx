@@ -254,20 +254,38 @@ function PaymentSelector({
 
 // --- Página Principal Boletería ---
 export default function Boleteria() {
-
   const isMobile = useMediaQuery("(max-width:768px)");
-  const {theme} = useContext(ThemesContext);
-  // Ejemplo de fechas (podés traer del backend)
+  const { theme } = useContext(ThemesContext);
+
+  // fechas (puedes cargarlas desde backend)
   const availableDates = ["2025-10-22", "2025-10-23", "2025-10-24"];
 
+  // pasos del formulario
+  type Step = "fecha" | "cantidad" | "entradas" | "pago" | "revisar";
+  const steps: Step[] = ["fecha", "cantidad", "entradas", "pago", "revisar"];
+  const [step, setStep] = useState<Step>("fecha");
+  const currentStepIndex = steps.indexOf(step);
+
+  // datos principales
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [entries, setEntries] = useState<EntradaUI[]>([]);
-
   const [paymentMethod, setPaymentMethod] = useState<number | null>(FormaPagoEnum.EFECTIVO);
   const [cardInfo, setCardInfo] = useState<{ numero?: string; venc?: string; cvv?: string }>({});
+  const [sending, setSending] = useState(false);
 
+  // navegación / validaciones de avance
+  const canNextFromFecha = !!selectedDate;
+  const canNextFromCantidad = quantity >= 1 && quantity <= 10;
+  const canNextFromEntradas = entries.length === quantity; // exige exacto
+  const canNextFromPago = !!paymentMethod;
+
+  // callbacks
   const handleAcceptEntries = () => {
+    if (entries.length !== quantity) {
+      return alert(`Debes agregar exactamente ${quantity} entradas para continuar`);
+    }
+    setStep("pago");
     const el = document.getElementById("payment-section");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
@@ -284,109 +302,215 @@ export default function Boleteria() {
     setQuantity(v);
   };
 
-  // Submit
-  const handleSubmit = async () => {
-
-    const body = {
-      idFormaDePago: paymentMethod,
+  // Construye el body del request
+  const buildRequestBody = () => {
+    const body: any = {
+      idFormaDePago: paymentMethod ?? null,
       fecha: selectedDate,
       entradas: entries.map((e) => ({
         tipoEntradaId: e.tipoEntradaId,
         edadVisitante: e.edadVisitante,
       })),
-      ...(paymentMethod === FormaPagoEnum.MERCADO_PAGO
-        ? {
-            numeroTarjeta: cardInfo.numero ? Number(cardInfo.numero.replace(/\s+/g, "")) : undefined,
-            fechaVencimiento: cardInfo.venc,
-            codigoSeguridad: cardInfo.cvv ? Number(cardInfo.cvv) : undefined,
-          }
-        : {}),
     };
 
+    if (paymentMethod === FormaPagoEnum.MERCADO_PAGO) {
+      if (cardInfo.numero) {
+        const num = Number(String(cardInfo.numero).replace(/\s+/g, ""));
+        if (!Number.isNaN(num)) body.numeroTarjeta = num;
+      }
+      if (cardInfo.venc) body.fechaVencimiento = cardInfo.venc;
+      if (cardInfo.cvv) {
+        const cvvNum = Number(cardInfo.cvv);
+        if (!Number.isNaN(cvvNum)) body.codigoSeguridad = cvvNum;
+      }
+    }
+
+    return body;
+  };
+
+  // Envío final — imprime request y response en consola solamente
+  const handleSubmit = async () => {
+    if (!selectedDate) return alert("Seleccioná una fecha");
+    if (entries.length !== quantity) return alert(`Debes agregar exactamente ${quantity} entradas`);
+    if (!paymentMethod) return alert("Seleccioná una forma de pago");
+
+    const body = buildRequestBody();
+    console.log("Request body:", body);
+
+    setSending(true);
     try {
-      const res = await fetch("/pedido", {
+      const res = await fetch("http://localhost:3000/pedido", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
 
+      let parsed;
+      try {
+        parsed = await res.json();
+      } catch (err) {
+        parsed = { ok: res.ok, status: res.status, text: await res.text() };
+      }
+
+      console.log("Response:", parsed);
+
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Error en el servidor");
+        const msg = (parsed && (parsed.message || parsed.error)) || `Error en el servidor (${res.status})`;
+        throw new Error(msg);
       }
 
       alert("Pedido enviado correctamente");
-      // reset o redirect
+      // reset
       setEntries([]);
+      setSelectedDate(null);
+      setQuantity(1);
+      setPaymentMethod(FormaPagoEnum.EFECTIVO);
+      setStep("fecha");
     } catch (err: any) {
       console.error(err);
-      alert("Error al enviar pedido: " + (err.message ?? err));
+      alert("Error al enviar pedido: " + (err?.message ?? err));
+    } finally {
+      setSending(false);
     }
+  };
+
+  // util: decide si renderizar un paso (solo se renderizan los pasos <= currentStepIndex)
+  const shouldRenderStep = (s: Step) => steps.indexOf(s) <= currentStepIndex;
+
+  // ui: mostrar botón "Siguiente" solo cuando ese paso es el paso actual
+  const renderNextButtonIfCurrent = (s: Step, onClick: () => void, disabled?: boolean, label?: string) => {
+    if (step !== s) return null;
+    return (
+      <button
+        onClick={onClick}
+        className={`px-4 py-2 rounded-md bg-green-700 text-white ${disabled ? "opacity-50" : "hover:bg-green-800"}`}
+        disabled={!!disabled}
+      >
+        {label ?? "Siguiente"}
+      </button>
+    );
   };
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-green-800">Boletería</h1>
+        <div className="text-sm text-gray-600">{`${currentStepIndex + 1} / ${steps.length}`}</div>
       </div>
 
-      {/* Date selector */}
-      <h3 className="text-gray-700 font-semibold mb-2" style={{color:theme.colors.verdePakistani}}>Fechas Disponibles</h3>
-      <DateChips
-        availableDates={availableDates}
-        selectedDate={selectedDate}
-        onSelect={(d) => setSelectedDate(d)}
-        holidays={["2025-12-25", "2025-01-01"]}
-        maxAdvanceDays={2}
-      />
+      {/* --- Paso Fecha --- */}
+      {shouldRenderStep("fecha") && (
+        <div className="mb-6">
+          <h3 className="text-gray-700 font-semibold mb-2" style={{ color: theme.colors.verdePakistani }}>
+            Fechas Disponibles
+          </h3>
+          <DateChips
+            availableDates={availableDates}
+            selectedDate={selectedDate}
+            onSelect={(d) => setSelectedDate(d)}
+            holidays={["2025-12-25", "2025-01-01"]}
+            maxAdvanceDays={2}
+          />
 
-      {/* Quantity selector */}
-      <QuantitySelector value={quantity} onChange={handleQuantityChange} />
-
-      {/* EntradasSection maneja: listado de entradas, modal add/edit, botón grande +Agregar / Aceptar */}
-      <EntradasSection
-        quantity={quantity}
-        entries={entries}
-        // EntradasSection espera una función "setEntries" que recibe un updater. Para mantener compatibilidad:
-        setEntries={(updater) => setEntries((prev) => (typeof updater === "function" ? (updater as any)(prev) : updater))}
-        onAcceptEntries={handleAcceptEntries}
-      />
-
-      {/* Total */}
-      <div className="mt-2 p-3 border border-green-100 rounded">
-        <div className="flex justify-between">
-          <div className="text-sm text-gray-600">Total:</div>
-          <div className="font-semibold text-green-700">${total.toLocaleString()}</div>
+          <div className="mt-3 flex gap-2">
+            {/* Volver solo cuando este paso es el actual (aquí no se mostrará porque es el primero) */}
+            {step === "fecha" && renderNextButtonIfCurrent("fecha", () => {
+              if (!canNextFromFecha) return alert("Seleccioná una fecha para continuar");
+              setStep("cantidad");
+            }, !canNextFromFecha, "Siguiente: Cantidad")}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Payment section (ancla para scroll) */}
-      <div id="payment-section" className="mt-6">
-        <FormaDePagoSection
-          selected={paymentMethod}
-          onSelect={(id) => {
-            setPaymentMethod(id);
-            // al elegir Mercado Pago podrías mostrar un modal externo más adelante.
-            // ahora no mostramos inputs de tarjeta.
-          }}
-        />
-      </div>
-
-      {/* Texto informativo + botón final */}
-      <div className="mt-6">
-        <Typography variant="body2" className="mb-2">
-          Recordá abonar en Boletería las entradas para poder ingresar al parque. Las entradas te llegarán por mail.
-        </Typography>
-
-        <div className="flex gap-3">
-          <Button variant="contained" color="success" fullWidth onClick={handleSubmit}>
-            Aceptar
-          </Button>
+      {/* --- Paso Cantidad --- */}
+      {shouldRenderStep("cantidad") && (
+        <div className="mb-6 border-t pt-6">
+          <QuantitySelector value={quantity} onChange={handleQuantityChange} />
+          <div className="flex gap-2 mt-3">
+            {/* Volver solo si este paso es actual */}
+            {step === "cantidad" && <button onClick={() => setStep("fecha")} className="px-4 py-2 rounded-md border">Volver</button>}
+            {renderNextButtonIfCurrent("cantidad", () => {
+              if (!canNextFromCantidad) return alert("Ingresá una cantidad válida");
+              setStep("entradas");
+            }, !canNextFromCantidad, "Siguiente: Entradas")}
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* --- Paso Entradas --- */}
+      {shouldRenderStep("entradas") && (
+        <div className="mb-6 border-t pt-6">
+          <EntradasSection
+            quantity={quantity}
+            entries={entries}
+            setEntries={(updater) => setEntries((prev) => (typeof updater === "function" ? (updater as any)(prev) : updater))}
+            onAcceptEntries={handleAcceptEntries}
+          />
+
+          <div className="flex gap-2 mt-3">
+            {/* Volver solo si este paso es actual */}
+            {step === "entradas" && <button onClick={() => setStep("cantidad")} className="px-4 py-2 rounded-md border">Volver</button>}
+            {renderNextButtonIfCurrent("entradas", () => {
+              if (!canNextFromEntradas) return alert(`Debes agregar exactamente ${quantity} entradas para continuar`);
+              setStep("pago");
+            }, !canNextFromEntradas, "Siguiente: Pago")}
+          </div>
+        </div>
+      )}
+
+      {/* --- Paso Pago --- */}
+      {shouldRenderStep("pago") && (
+        <div id="payment-section" className="mb-6 border-t pt-6">
+          <FormaDePagoSection selected={paymentMethod} onSelect={(id) => setPaymentMethod(id)} />
+
+          <div className="flex gap-2 mt-3">
+            {/* Volver solo si este paso es actual */}
+            {step === "pago" && <button onClick={() => setStep("entradas")} className="px-4 py-2 rounded-md border">Volver</button>}
+            {renderNextButtonIfCurrent("pago", () => {
+              if (!canNextFromPago) return alert("Seleccioná una forma de pago");
+              setStep("revisar");
+            }, !canNextFromPago, "Siguiente: Revisar")}
+          </div>
+        </div>
+      )}
+
+      {/* --- Paso Revisar & Enviar --- */}
+      {shouldRenderStep("revisar") && (
+        <div className="mb-6 border-t pt-6">
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-gray-700 font-semibold">Resumen</h3>
+              <div className="text-sm text-gray-600">
+                Total: <span className="font-semibold text-green-700">${total.toLocaleString()}</span>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <div><strong>Fecha:</strong> {selectedDate ?? "-"}</div>
+              <div><strong>Cantidad elegida:</strong> {quantity}</div>
+              <div><strong>Entradas agregadas:</strong> {entries.length}</div>
+              <div><strong>Forma de pago:</strong> {paymentMethod === FormaPagoEnum.EFECTIVO ? "Efectivo" : paymentMethod === FormaPagoEnum.MERCADO_PAGO ? "Mercado Pago" : "-"}</div>
+            </div>
+
+            <div className="mb-4">
+              <button onClick={handleSubmit} className={`px-4 py-2 rounded-md bg-green-800 text-white ${sending ? "opacity-60" : "hover:bg-green-900"}`} disabled={sending}>
+                {sending ? "Enviando..." : "Enviar pedido"}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex gap-2 mt-3">
+            {/* Volver solo si este paso es actual */}
+            {step === "revisar" && <button onClick={() => setStep("pago")} className="px-4 py-2 rounded-md border">Volver</button>}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
+
+
 
 // TanStack route export (si usas createFileRoute pattern)
 export const Route = createFileRoute("/boleteria")({
