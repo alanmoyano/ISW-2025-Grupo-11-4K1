@@ -189,15 +189,17 @@ export const app = new Hono()
 
     pedidoADevolver = pedido;
 
-    entradas.forEach(async (entrada) => {
-      const nuevaEntrada = await guardarEntradasReferidasAPedido(
-        db,
-        pedido.idPedido,
-        entrada.tipoEntradaId,
-        entrada.edadVisitante,
-      );
-      pedidoADevolver.entradas.push(nuevaEntrada);
-    });
+    await Promise.all(
+      entradas.map(async (entrada) => {
+        const nuevaEntrada = await guardarEntradasReferidasAPedido(
+          db,
+          pedido.idPedido,
+          entrada.tipoEntradaId,
+          entrada.edadVisitante,
+        );
+        pedidoADevolver.entradas.push(nuevaEntrada);
+      }),
+    );
 
     // Disparador de evento para notificaciones
     eventDispatcher.dispatch("pedido:generado", pedidoADevolver);
