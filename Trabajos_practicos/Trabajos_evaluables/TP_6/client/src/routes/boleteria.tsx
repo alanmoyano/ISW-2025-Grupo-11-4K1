@@ -24,6 +24,8 @@ import { useContext } from "react";
 import { ThemesContext } from "../components/ThemesContext";
 import { DateChips} from "@/components/boleteria/DateChips";
 import EntradasSection, { EntradaUI } from "@/components/boleteria/entradasSection";
+import FormaDePagoSection from "@/components/boleteria/formaDePagoSection";
+
 
 // --- Tipos y constantes (ajustá precios si querés) ---
 export const TipoEntradaEnum = {
@@ -182,48 +184,6 @@ function EntryModal({
         </Button>
       </DialogActions>
     </Dialog>
-  );
-}
-
-// --- Entry Card ---
-function EntryCard({
-  entry,
-  onEdit,
-}: {
-  entry: EntradaUI;
-  onEdit: (id: string) => void;
-}) {
-  const tipo = TIPO_ENTRADAS.find((t) => t.id === entry.tipoEntradaId)!;
-  const mostrarOriginal = entry.precioCalculado < tipo.precio;
-
-  return (
-    <div className="w-full rounded-lg border border-green-200 bg-white p-4 mb-4 flex justify-between items-center shadow-sm">
-      <div>
-        <div className="flex items-center gap-3">
-          <h4 className="text-2xl font-semibold text-green-800">
-            {tipo.nombre}
-          </h4>
-          {tipo.id === TipoEntradaEnum.VIP && (
-            <span className="text-yellow-500 ml-1">♛ Premium</span>
-          )}
-        </div>
-        <div className="text-sm text-gray-500">Edad: {entry.edadVisitante}</div>
-      </div>
-
-      <div className="flex flex-col items-end gap-2">
-        <div>
-          {mostrarOriginal && (
-            <span className="text-xs text-gray-400 line-through mr-2">
-              ${tipo.precio.toLocaleString()}
-            </span>
-          )}
-          <span className="text-lg font-semibold text-green-700">${entry.precioCalculado.toLocaleString()}</span>
-        </div>
-        <Button variant="outlined" size="small" onClick={() => onEdit(entry.id)} startIcon={<EditIcon />}>
-          Editar
-        </Button>
-      </div>
-    </div>
   );
 }
 
@@ -402,11 +362,13 @@ export default function Boleteria() {
 
       {/* Payment section (ancla para scroll) */}
       <div id="payment-section" className="mt-6">
-        <PaymentSelector
+        <FormaDePagoSection
           selected={paymentMethod}
-          onSelect={(id) => setPaymentMethod(id)}
-          onCardChange={(c) => setCardInfo(c)}
-          cardInfo={cardInfo}
+          onSelect={(id) => {
+            setPaymentMethod(id);
+            // al elegir Mercado Pago podrías mostrar un modal externo más adelante.
+            // ahora no mostramos inputs de tarjeta.
+          }}
         />
       </div>
 
