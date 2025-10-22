@@ -23,6 +23,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useContext } from "react";
 import { ThemesContext } from "../components/ThemesContext";
 import { DateChips} from "@/components/boleteria/DateChips";
+import EntradasSection, { EntradaUI } from "@/components/boleteria/entradasSection";
 
 // --- Tipos y constantes (ajustá precios si querés) ---
 export const TipoEntradaEnum = {
@@ -39,12 +40,12 @@ const TIPO_ENTRADAS = [
 
 export const FormaPagoEnum = { EFECTIVO: 1, MERCADO_PAGO: 2 } as const;
 
-type EntradaUI = {
-  id: string; // local id para editar
-  tipoEntradaId: TipoEntradaId;
-  edadVisitante: number;
-  precioCalculado: number;
-};
+//type EntradaUI = {
+//  id: string; // local id para editar
+//  tipoEntradaId: TipoEntradaId;
+//  edadVisitante: number;
+//  precioCalculado: number;
+//};
 
 // --- Helpers de precio ---
 function calcularPrecio(tipoId: TipoEntradaId, edad: number): { precioFinal: number; precioOriginal: number } {
@@ -293,6 +294,7 @@ function PaymentSelector({
 
 // --- Página Principal Boletería ---
 export default function Boleteria() {
+
   const isMobile = useMediaQuery("(max-width:768px)");
   const {theme} = useContext(ThemesContext);
   // Ejemplo de fechas (podés traer del backend)
@@ -301,47 +303,17 @@ export default function Boleteria() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [quantity, setQuantity] = useState<number>(1);
   const [entries, setEntries] = useState<EntradaUI[]>([]);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
 
   const [paymentMethod, setPaymentMethod] = useState<number | null>(FormaPagoEnum.EFECTIVO);
   const [cardInfo, setCardInfo] = useState<{ numero?: string; venc?: string; cvv?: string }>({});
 
-  // Abrir modal para nuevo
-  const openAddModal = () => {
-    if (entries.length >= 10) return alert("No podés agregar más de 10 entradas");
-    setEditingId(null);
-    setModalOpen(true);
+  const handleAcceptEntries = () => {
+    const el = document.getElementById("payment-section");
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
-  // Abrir modal para editar
-  const openEditModal = (id: string) => {
-    setEditingId(id);
-    setModalOpen(true);
-  };
-
-  const handleSaveEntry = (payload: { tipoEntradaId: TipoEntradaId; edadVisitante: number }) => {
-    const { tipoEntradaId, edadVisitante } = payload;
-    const { precioFinal } = calcularPrecio(tipoEntradaId, edadVisitante);
-
-    if (editingId) {
-      setEntries((prev) =>
-        prev.map((e) => (e.id === editingId ? { ...e, tipoEntradaId, edadVisitante, precioCalculado: precioFinal } : e)),
-      );
-      setEditingId(null);
-    } else {
-      const newEntry: EntradaUI = {
-        id: String(Date.now()) + Math.random().toString(36).slice(2, 7),
-        tipoEntradaId,
-        edadVisitante,
-        precioCalculado: precioFinal,
-      };
-      setEntries((prev) => [...prev, newEntry]);
-    }
-
-    // sync quantity if entries grow
-    setQuantity((q) => Math.max(q, entries.length + 1));
-  };
+  // total dinámico
+  const total = useMemo(() => entries.reduce((s, e) => s + e.precioCalculado, 0), [entries]);
 
   // Si se reduce la cantidad por debajo de entradas existentes, cortarlas
   const handleQuantityChange = (v: number) => {
@@ -352,14 +324,8 @@ export default function Boleteria() {
     setQuantity(v);
   };
 
-  const total = useMemo(() => entries.reduce((s, e) => s + e.precioCalculado, 0), [entries]);
-
   // Submit
   const handleSubmit = async () => {
-    if (!selectedDate) return alert("Seleccioná una fecha");
-    if (entries.length < 1) return alert("Tenés que agregar al menos una entrada");
-    if (entries.length > 10) return alert("No podés comprar más de 10 entradas");
-    if (!paymentMethod) return alert("Seleccioná una forma de pago");
 
     const body = {
       idFormaDePago: paymentMethod,
@@ -398,15 +364,13 @@ export default function Boleteria() {
     }
   };
 
-  // Edit modal initial
-  const editingInitial = editingId ? entries.find((e) => e.id === editingId) : undefined;
-
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-green-800">Boletería</h1>
       </div>
 
+      {/* Date selector */}
       <h3 className="text-gray-700 font-semibold mb-2" style={{color:theme.colors.verdePakistani}}>Fechas Disponibles</h3>
       <DateChips
         availableDates={availableDates}
@@ -416,34 +380,28 @@ export default function Boleteria() {
         maxAdvanceDays={2}
       />
 
-
+      {/* Quantity selector */}
       <QuantitySelector value={quantity} onChange={handleQuantityChange} />
 
-      <div className="mb-4 flex justify-between items-center">
-        <h3 className="text-gray-700 font-semibold" style={{color:theme.colors.verdePakistani}}>Entradas</h3>
-        <div className="flex items-center gap-3">
-          <Button variant="outlined" onClick={openAddModal} startIcon={<AddIcon />}>
-            Agregar Entrada
-          </Button>
+      {/* EntradasSection maneja: listado de entradas, modal add/edit, botón grande +Agregar / Aceptar */}
+      <EntradasSection
+        quantity={quantity}
+        entries={entries}
+        // EntradasSection espera una función "setEntries" que recibe un updater. Para mantener compatibilidad:
+        setEntries={(updater) => setEntries((prev) => (typeof updater === "function" ? (updater as any)(prev) : updater))}
+        onAcceptEntries={handleAcceptEntries}
+      />
+
+      {/* Total */}
+      <div className="mt-2 p-3 border border-green-100 rounded">
+        <div className="flex justify-between">
+          <div className="text-sm text-gray-600">Total:</div>
+          <div className="font-semibold text-green-700">${total.toLocaleString()}</div>
         </div>
       </div>
 
-      <div>
-        {entries.length === 0 && <div className="text-gray-400">No hay entradas agregadas aún.</div>}
-
-        {entries.map((e) => (
-          <EntryCard key={e.id} entry={e} onEdit={openEditModal} />
-        ))}
-
-        <div className="mt-2 p-3 border border-green-100 rounded">
-          <div className="flex justify-between">
-            <div className="text-sm text-gray-600">Total:</div>
-            <div className="font-semibold text-green-700">${total.toLocaleString()}</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6">
+      {/* Payment section (ancla para scroll) */}
+      <div id="payment-section" className="mt-6">
         <PaymentSelector
           selected={paymentMethod}
           onSelect={(id) => setPaymentMethod(id)}
@@ -452,8 +410,9 @@ export default function Boleteria() {
         />
       </div>
 
+      {/* Texto informativo + botón final */}
       <div className="mt-6">
-        <Typography variant="body2" className="mb-2" >
+        <Typography variant="body2" className="mb-2">
           Recordá abonar en Boletería las entradas para poder ingresar al parque. Las entradas te llegarán por mail.
         </Typography>
 
@@ -463,16 +422,6 @@ export default function Boleteria() {
           </Button>
         </div>
       </div>
-
-      <EntryModal
-        open={modalOpen}
-        initial={editingInitial}
-        onClose={() => {
-          setModalOpen(false);
-          setEditingId(null);
-        }}
-        onSave={handleSaveEntry}
-      />
     </div>
   );
 }
