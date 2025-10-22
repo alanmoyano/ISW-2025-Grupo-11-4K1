@@ -237,6 +237,10 @@ describe("Validación del formulario de compra de entradas", () => {
   });
 
   describe("Forma de pago", () => {
+    const mañana = new Date();
+    mañana.setDate(mañana.getDate() + 1);
+    const mañanaString = mañana.toISOString().split("T")[0];
+
     it("Debe aceptar una forma de pago valida", () => {
       const pedido: Pedido = {
         idPedido: 1,
@@ -252,7 +256,7 @@ describe("Validación del formulario de compra de entradas", () => {
           },
         ],
         idFormaDePago: 1,
-        fecha: "2025-10-21",
+        fecha: mañanaString,
         total: 1000,
       };
 
