@@ -1,6 +1,7 @@
 import { buildApiResponse, isBodyPostPedido } from "@shared/utils";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import type { BodyPostPedido, Entrada, Pedido } from "@shared/types";
 import {
   guardarEntradasReferidasAPedido,
   guardarPedidoDeVisita,
@@ -8,9 +9,7 @@ import {
   obtenerTiposDeEntrada,
   obtenerCantidadEntradasVendidasPorFecha,
 } from "./dbAccess";
-import { initDatabase } from "./dbDefinition";
-import type { BodyPostPedidoSchema } from "shared/dist";
-import type { BodyPostPedido, Entrada, Pedido } from "@shared/types";
+import initDatabase from "./dbDefinition";
 import {
   calcularPrecioTotal,
   obtenerAutorizacionMercadoPago,
@@ -20,14 +19,17 @@ import {
   validarFechaVisita,
   validarDisponibilidadCupo,
 } from "./entradasValidation";
-import { eventDispatcher } from "./eventDispatcher";
-import { SimulatedNotificacionService } from "./notificaciones/simulated-notificacion.service";
-import { EnviarEmailConfirmacionListener } from "./notificaciones/enviar-email-confirmacion.listener";
+import eventDispatcher from "./eventDispatcher";
+import SimulatedNotificacionService from "./notificaciones/simulated-notificacion.service";
+import EnviarEmailConfirmacionListener from "./notificaciones/enviar-email-confirmacion.listener";
 
 const db = initDatabase();
 
 const notificacionService = new SimulatedNotificacionService(); // { silent: true } para no imprimir en consola
-const emailListener = new EnviarEmailConfirmacionListener(db, notificacionService);
+const emailListener = new EnviarEmailConfirmacionListener(
+  db,
+  notificacionService,
+);
 emailListener.setup();
 
 export const app = new Hono()
@@ -80,7 +82,8 @@ export const app = new Hono()
 
     const { idFormaDePago, fecha, entradas } = body;
 
-    for (const entrada of entradas) {
+    // eslint-disable-next-line consistent-return
+    entradas.forEach((entrada) => {
       if (entrada.edadVisitante < 0 || entrada.edadVisitante > 110) {
         return c.json(
           buildApiResponse(
@@ -91,7 +94,8 @@ export const app = new Hono()
           { status: 400 },
         );
       }
-    }
+    });
+
     // Validamos que, de usar una tarjeta para pagar, el pago sea autorizado por mercado pago
     if (idFormaDePago === 2) {
       let autorizacion: boolean;
@@ -127,30 +131,30 @@ export const app = new Hono()
 
     // Validacion de cupos
     const cantidadSolicitada = body.entradas.length;
-    const fetcherEntradasVendidas = (f: string) => 
+    const fetcherEntradasVendidas = (f: string) =>
       obtenerCantidadEntradasVendidasPorFecha(db, f);
 
     const tieneCupo = await validarDisponibilidadCupo(
       fecha,
       cantidadSolicitada,
-      fetcherEntradasVendidas
+      fetcherEntradasVendidas,
     );
-    
+
     if (!tieneCupo) {
       return c.json(
         buildApiResponse(
           null,
           false,
-          "No hay cupo disponible para la fecha seleccionada."
+          "No hay cupo disponible para la fecha seleccionada.",
         ),
         { status: 400 },
       );
     }
 
     // Validamos que la cantidad de entradas solicitadas no supere el cupo maximo por compra
-    let arrayValidadorEntradas: Entrada[] = [];
+    const arrayValidadorEntradas: Entrada[] = [];
     let totalPedido = 0;
-    for (let entrada of entradas) {
+    entradas.forEach((entrada) => {
       const entradadValidadora: Entrada = {
         id: 0,
         tipoEntradaId: entrada.tipoEntradaId,
@@ -160,7 +164,7 @@ export const app = new Hono()
         pedidoId: 0,
       };
       arrayValidadorEntradas.push(entradadValidadora);
-    }
+    });
 
     totalPedido += calcularPrecioTotal(arrayValidadorEntradas);
 
@@ -185,7 +189,7 @@ export const app = new Hono()
 
     pedidoADevolver = pedido;
 
-    for (const entrada of entradas) {
+    entradas.forEach(async (entrada) => {
       const nuevaEntrada = await guardarEntradasReferidasAPedido(
         db,
         pedido.idPedido,
@@ -193,7 +197,7 @@ export const app = new Hono()
         entrada.edadVisitante,
       );
       pedidoADevolver.entradas.push(nuevaEntrada);
-    }
+    });
 
     // Disparador de evento para notificaciones
     eventDispatcher.dispatch("pedido:generado", pedidoADevolver);

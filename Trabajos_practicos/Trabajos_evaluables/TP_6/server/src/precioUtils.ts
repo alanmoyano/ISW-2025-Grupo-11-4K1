@@ -1,9 +1,8 @@
 import type { Entrada } from "@shared/types";
 import { TipoEntradaEnum } from "@shared/types";
 
-
 const PRECIOS_BASE = {
-  [TipoEntradaEnum.REGULAR]: 5000, 
+  [TipoEntradaEnum.REGULAR]: 5000,
   [TipoEntradaEnum.VIP]: 10000,
 };
 
@@ -25,7 +24,8 @@ type EntradaDesdeCliente = Omit<Entrada, "id" | "precio">;
  * @returns El precio final de la entrada.
  */
 export function calcularPrecioEntrada(entrada: EntradaDesdeCliente): number {
-  const precioBase = PRECIOS_BASE[entrada.tipoEntradaId as keyof typeof PRECIOS_BASE];
+  const precioBase =
+    PRECIOS_BASE[entrada.tipoEntradaId as keyof typeof PRECIOS_BASE];
 
   // REQUISITO: Menores o iguales a 3 años no pagan.
   if (entrada.edadVisitante <= REGLAS_DESCUENTO.EDAD_MAXIMA_GRATIS) {
@@ -33,11 +33,13 @@ export function calcularPrecioEntrada(entrada: EntradaDesdeCliente): number {
   }
 
   // REQUISITO: Menores o iguales a 10 y mayores o iguales a 60 pagan la mitad.
-  if (entrada.edadVisitante <= REGLAS_DESCUENTO.EDAD_MAXIMA_DESCUENTO_NINO || entrada.edadVisitante >= REGLAS_DESCUENTO.EDAD_MINIMA_DESCUENTO_MAYOR) {
+  if (
+    entrada.edadVisitante <= REGLAS_DESCUENTO.EDAD_MAXIMA_DESCUENTO_NINO ||
+    entrada.edadVisitante >= REGLAS_DESCUENTO.EDAD_MINIMA_DESCUENTO_MAYOR
+  ) {
     return precioBase * REGLAS_DESCUENTO.PORCENTAJE_DESCUENTO;
   }
 
-  
   return precioBase;
 }
 
@@ -51,11 +53,11 @@ export function calcularPrecioTotal(entradas: EntradaDesdeCliente[]): number {
   // Usamos .reduce() para sumar el precio calculado de cada entrada en la lista.
   return entradas.reduce(
     (total, entrada) => total + calcularPrecioEntrada(entrada),
-    0, 
+    0,
   );
 }
 
-export function obtenerAutorizacionMercadoPago(funciona: boolean): boolean { 
+export function obtenerAutorizacionMercadoPago(funciona: boolean): boolean {
   // Aca pondriamos la conexion con la API de MercadoPago, SI TUVIERA UNA!!!
   return funciona;
 }

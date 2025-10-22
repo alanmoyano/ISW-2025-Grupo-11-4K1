@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { calcularPrecioTotal } from "../src/precioUtils";
 import type { Entrada } from "@shared/types";
+import { calcularPrecioTotal } from "../src/precioUtils";
 
 // Se define un tipo local para el test que representa los datos que envía el cliente.
 

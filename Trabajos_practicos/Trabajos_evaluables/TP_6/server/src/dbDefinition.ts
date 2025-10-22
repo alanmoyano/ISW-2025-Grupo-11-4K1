@@ -1,6 +1,7 @@
+// eslint-disable-next-line import-x/no-unresolved
 import { Database } from "bun:sqlite";
 
-export function initDatabase(dbInstance?: Database): Database {
+export default function initDatabase(dbInstance?: Database): Database {
   const db = dbInstance || new Database("database.sqlite");
 
   db.run(
@@ -57,7 +58,7 @@ export function initDatabase(dbInstance?: Database): Database {
         FOREIGN KEY (pedido_id) REFERENCES pedido(id_pedido),
         FOREIGN KEY (tipo_entrada_id) REFERENCES tipo_entrada(id)
     );`);
-    db.run(`
+  db.run(`
     CREATE TABLE IF NOT EXISTS mail_enviados (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         pedido_id INTEGER NOT NULL,

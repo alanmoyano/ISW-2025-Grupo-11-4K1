@@ -5,7 +5,6 @@ const CUPOS = {
   CUPO_MAXIMO_DIARIO: 100,
 };
 
-validarCantidadEntradas;
 export function validarFechaVisita(fecha: string): boolean {
   const fechaVisita = new Date(fecha);
 
@@ -58,7 +57,7 @@ const CUPO_MAXIMO_DIARIO = 100;
 export async function validarDisponibilidadCupo(
   fecha: string,
   cantidadSolicitada: number,
-  fetchEntradasVendidas: (fecha: string) => Promise<number>
+  fetchEntradasVendidas: (fecha: string) => Promise<number>,
 ): Promise<boolean> {
   if (cantidadSolicitada <= 0) {
     return false;

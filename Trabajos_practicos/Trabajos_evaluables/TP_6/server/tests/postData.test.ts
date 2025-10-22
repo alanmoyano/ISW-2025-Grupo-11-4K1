@@ -1,9 +1,10 @@
-import app from "@server/index";
+import { app } from "@server/index";
+
+import type { Entrada, Pedido } from "@shared/types";
 import { testClient } from "hono/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import * as accesoDB from "../src/dbAccess";
-import type { FormaDePago, Pedido, TipoEntrada, Entrada } from "@shared/types";
-import { eventDispatcher } from "../src/eventDispatcher";
+import * as accesoDB from "@server/dbAccess";
+import eventDispatcher from "@server/eventDispatcher";
 
 const mockGuardarPedidoDeVisita = vi.spyOn(accesoDB, "guardarPedidoDeVisita");
 const mockGuardarEntradasReferidasAPedido = vi.spyOn(

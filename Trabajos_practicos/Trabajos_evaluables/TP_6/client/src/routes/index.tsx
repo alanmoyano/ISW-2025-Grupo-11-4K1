@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/")({
-  component: MainPage,
-});
+// @ts-expect-error
+import React from "react";
 
 export default function MainPage() {
   return (
@@ -14,3 +12,7 @@ export default function MainPage() {
     </div>
   );
 }
+
+export const Route = createFileRoute("/")({
+  component: MainPage,
+});

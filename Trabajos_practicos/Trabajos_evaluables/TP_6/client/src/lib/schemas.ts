@@ -15,7 +15,8 @@ export const entradasFormSchema = z.object({
     .string()
     .min(1, "Debe ingresar una fecha de visita")
     .refine(isValidFechaVisita, {
-      message: "No puede seleccionar un día lunes, feriado o anterior al actual",
+      message:
+        "No puede seleccionar un día lunes, feriado o anterior al actual",
     }),
   entradas: z
     .array(entradaFormSchema)

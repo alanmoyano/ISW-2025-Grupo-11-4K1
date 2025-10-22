@@ -1,5 +1,11 @@
 import type Database from "bun:sqlite";
-import type { Entrada, FormaDePago, Pedido, TipoEntrada, Usuario } from "@shared/types";
+import type {
+  Entrada,
+  FormaDePago,
+  Pedido,
+  TipoEntrada,
+  Usuario,
+} from "@shared/types";
 import { isFormaDePago, isTipoEntrada, isUsuario } from "@shared/utils";
 import { calcularPrecioEntrada } from "./precioUtils";
 
@@ -10,7 +16,7 @@ export async function obtenerTiposDeEntrada(
 
   const resultado = db.query("SELECT * FROM tipo_entrada").all();
 
-  for (const tipoEntrada of resultado) {
+  resultado.forEach((tipoEntrada) => {
     if (!isTipoEntrada(tipoEntrada)) {
       throw new Error("Tipo de entrada inválido");
     }
@@ -21,7 +27,7 @@ export async function obtenerTiposDeEntrada(
       precio: tipoEntrada.precio,
     };
     tiposEntrada.push(nuevoTipoEntrada);
-  }
+  });
 
   return tiposEntrada;
 }
@@ -33,7 +39,7 @@ export async function obtenerFormasDePago(
 
   const resultado = db.query("SELECT * FROM forma_de_pago").all();
 
-  for (const fila of resultado) {
+  resultado.forEach((fila) => {
     if (!isFormaDePago(fila)) {
       throw new Error("Forma de pago inválida");
     }
@@ -43,7 +49,8 @@ export async function obtenerFormasDePago(
       nombre: fila.nombre,
     };
     FormasPago.push(nuevaFormaPago);
-  }
+  });
+
   return FormasPago;
 }
 
@@ -63,9 +70,9 @@ export async function guardarPedidoDeVisita(
   const nuevoPedido: Pedido = {
     idPedido: resultado.lastInsertRowid as number,
     usuarioId: idUsuario,
-    idFormaDePago: idFormaDePago,
-    fecha: fecha,
-    total: total,
+    idFormaDePago,
+    fecha,
+    total,
     entradas: [],
   };
 
@@ -81,11 +88,11 @@ export async function guardarEntradasReferidasAPedido(
   const query =
     db.prepare(`INSERT INTO entrada (pedido_id, tipo_entrada_id, edad_visitante, precio, utilizada)
     VALUES (?, ?, ?, ?, ?)`);
-  
+
   const nuevaEntrada: Entrada = {
     id: 0,
-    tipoEntradaId: tipoEntradaId,
-    edadVisitante: edadVisitante,
+    tipoEntradaId,
+    edadVisitante,
     precio: 0,
     utilizada: false,
     pedidoId: idPedido,
@@ -119,7 +126,7 @@ export async function obtenerUsuarioPorId(
   if (isUsuario(resultado)) {
     return resultado;
   }
-  
+
   return null;
 }
 
@@ -131,13 +138,19 @@ export async function guardarEmailEnviado(
   cuerpo: string,
 ): Promise<number> {
   const fechaEnvio = new Date().toISOString();
-  
+
   const query = db.prepare(`
     INSERT INTO mail_enviados (pedido_id, destinatario, asunto, cuerpo, fecha_envio)
     VALUES (?, ?, ?, ?, ?)
   `);
-  
-  const resultado = query.run(pedidoId, destinatario, asunto, cuerpo, fechaEnvio);
+
+  const resultado = query.run(
+    pedidoId,
+    destinatario,
+    asunto,
+    cuerpo,
+    fechaEnvio,
+  );
   return resultado.lastInsertRowid as number;
 }
 

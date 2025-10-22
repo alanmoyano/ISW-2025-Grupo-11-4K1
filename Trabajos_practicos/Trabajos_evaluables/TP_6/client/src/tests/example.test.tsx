@@ -1,10 +1,10 @@
 import { screen, render } from "@testing-library/react";
 import { test, expect } from "vitest";
+// @ts-expect-error
+import React from "react";
 
 function MyComponent() {
-    return (
-        <div data-testid="my-component">My Component</div>
-    )
+  return <div data-testid="my-component">My Component</div>;
 }
 
 // test de manipulación del DOM (sin react)

@@ -1,14 +1,19 @@
 import type { INotificacionService } from "./notificacion.service";
 
-export class SimulatedNotificacionService implements INotificacionService {
+export default class SimulatedNotificacionService
+  implements INotificacionService
+{
   private silent: boolean;
 
   constructor(options: { silent: boolean } = { silent: false }) {
     this.silent = options.silent;
   }
-  
-  public async enviar(destinatario: string, asunto: string, cuerpo: string): Promise<void> {
-    
+
+  public async enviar(
+    destinatario: string,
+    asunto: string,
+    cuerpo: string,
+  ): Promise<void> {
     if (!this.silent) {
       console.log("===================================");
       console.log("=== ENVÍO DE EMAIL ===");
@@ -18,7 +23,7 @@ export class SimulatedNotificacionService implements INotificacionService {
       console.log(cuerpo);
       console.log("===================================");
     }
-    
+
     return Promise.resolve();
   }
 }

@@ -1,10 +1,12 @@
+// eslint-disable-next-line import-x/no-unresolved
 import { test, expect, spyOn, beforeAll, afterAll, afterEach } from "bun:test";
-import { initDatabase } from "../src/dbDefinition";
+// eslint-disable-next-line import-x/no-unresolved
 import { Database } from "bun:sqlite";
 import type { Pedido } from "@shared/types";
-import { eventDispatcher } from "../src/eventDispatcher";
-import { SimulatedNotificacionService } from "../src/notificaciones/simulated-notificacion.service";
-import { EnviarEmailConfirmacionListener } from "../src/notificaciones/enviar-email-confirmacion.listener";
+import initDatabase from "@server/dbDefinition";
+import eventDispatcher from "@server/eventDispatcher";
+import SimulatedNotificacionService from "@server/notificaciones/simulated-notificacion.service";
+import EnviarEmailConfirmacionListener from "@server/notificaciones/enviar-email-confirmacion.listener";
 
 let db: Database;
 let notificacionService: SimulatedNotificacionService;
@@ -12,7 +14,7 @@ let emailListener: EnviarEmailConfirmacionListener;
 
 beforeAll(() => {
   db = new Database(":memory:");
-  initDatabase(db); 
+  initDatabase(db);
 
   notificacionService = new SimulatedNotificacionService({ silent: true }); // true para no imprimir en consola
   emailListener = new EnviarEmailConfirmacionListener(db, notificacionService);
@@ -33,7 +35,7 @@ test("El listener debe enviar un email al recibir un 'pedido:generado'", async (
 
   const fakePedido: Pedido = {
     idPedido: 123,
-    usuarioId: 1, 
+    usuarioId: 1,
     idFormaDePago: 1,
     fecha: "2025-12-01",
     total: 7500,
@@ -58,16 +60,20 @@ test("El listener debe enviar un email al recibir un 'pedido:generado'", async (
   };
 
   eventDispatcher.dispatch("pedido:generado", fakePedido);
-  await new Promise((resolve) => setTimeout(resolve, 0));
+  await new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
 
   expect(spyEnviar).toHaveBeenCalledTimes(1);
 
   expect(spyEnviar).toHaveBeenCalledWith(
-    "example@mail.com", 
+    "example@mail.com",
     expect.stringContaining("Confirmación de tu Pedido #123"),
-    expect.stringContaining("Monto Total: $7500")
+    expect.stringContaining("Monto Total: $7500"),
   );
 
-  expect(spyEnviar.mock.calls[0][2]).toContain("Visitante 1: Regular (Edad: 30)");
-  expect(spyEnviar.mock.calls[0][2]).toContain("Visitante 2: Regular (Edad: 8)");
+  const cuerpoEmail = spyEnviar.mock.calls[0]?.[2];
+
+  expect(cuerpoEmail).toContain("Visitante 1: Regular (Edad: 30)");
+  expect(cuerpoEmail).toContain("Visitante 2: Regular (Edad: 8)");
 });

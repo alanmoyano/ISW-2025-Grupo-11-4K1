@@ -1,9 +1,9 @@
-import app from "@server/index";
 import type { Pedido } from "@shared/types";
 import { describe, expect, it } from "vitest";
-import { validarFechaVisita } from "@server/entradasValidation";
-import { validarCantidadEntradas } from "@server/entradasValidation";
-import { pedidoSchema } from "shared/dist";
+import {
+  validarFechaVisita,
+  validarCantidadEntradas,
+} from "@server/entradasValidation";
 
 describe("Validar los datos que se cargan", () => {
   it("La fecha no debe ser un lunes o un dia festivo", async () => {

@@ -1,8 +1,8 @@
-import app from "@server/index";
+import { app } from "@server/index";
 import { testClient } from "hono/testing";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import * as accesoDB from "../src/dbAccess";
 import type { FormaDePago, TipoEntrada } from "@shared/types";
+import * as accesoDB from "../src/dbAccess";
 
 const mockObtenerTiposDeEntrada = vi.spyOn(accesoDB, "obtenerTiposDeEntrada");
 const mockObtenerFormaDePago = vi.spyOn(accesoDB, "obtenerFormasDePago");

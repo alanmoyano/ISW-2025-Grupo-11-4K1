@@ -11,7 +11,7 @@
     // Output settings
     "declaration": true,
     "outDir": "dist",
-    
+
     "noEmit": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

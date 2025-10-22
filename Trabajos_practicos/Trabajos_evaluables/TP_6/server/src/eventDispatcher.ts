@@ -1,13 +1,13 @@
 import type { Pedido } from "@shared/types";
 
 // Tipos de eventos y sus payloads
-type EventMap = {
+interface EventMap {
   "pedido:generado": (pedido: Pedido) => void;
-};
+}
 type EventName = keyof EventMap;
 
 class EventDispatcher {
-  private listeners: { [K in EventName]?: Array<EventMap[K]> } = {};
+  private listeners: { [K in EventName]?: EventMap[K][] } = {};
 
   on<E extends EventName>(eventName: E, listener: EventMap[E]) {
     if (!this.listeners[eventName]) {
@@ -17,7 +17,10 @@ class EventDispatcher {
   }
 
   // Metodo para disparar un evento
-  dispatch<E extends EventName>(eventName: E, ...args: Parameters<EventMap[E]>) {
+  dispatch<E extends EventName>(
+    eventName: E,
+    ...args: Parameters<EventMap[E]>
+  ) {
     const eventListeners = this.listeners[eventName];
     if (!eventListeners) {
       return;
@@ -38,5 +41,7 @@ class EventDispatcher {
   }
 }
 
-// Exportacion Singleton 
-export const eventDispatcher = new EventDispatcher();
+// Exportacion Singleton
+const eventDispatcher = new EventDispatcher();
+
+export default eventDispatcher;
