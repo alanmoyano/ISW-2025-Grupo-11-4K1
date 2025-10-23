@@ -1,5 +1,4 @@
-// src/components/boleteria/EntradasSection.tsx
-import React, { useState, useMemo, useEffect, useContext } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -15,21 +14,20 @@ import {
   Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { ThemesContext } from "@/components/ThemesContext";
 
 // --- Tipos (sin cambios) ---
-export type TipoEntrada = {
+export interface TipoEntrada {
   id: number;
   nombre: string;
   precio: number;
-};
+}
 const MENOR_ID = 3;
-export type EntradaUI = {
+export interface EntradaUI {
   id: string;
   tipoEntradaId: number;
   edadVisitante: number;
   precioCalculado: number;
-};
+}
 
 // --- Función de Cálculo (sin cambios) ---
 // Esta función está bien definida y aislada.
@@ -61,11 +59,11 @@ function edadToRango(edad: number) {
 }
 
 // --- NUEVO SUB-COMPONENTE: EntradaCard ---
-type EntradaCardProps = {
+interface EntradaCardProps {
   entry: EntradaUI;
   tiposDeEntrada: TipoEntrada[];
   onEdit: (id: string) => void;
-};
+}
 
 function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
   const tipoObj = tiposDeEntrada.find((t) => t.id === entry.tipoEntradaId);
@@ -99,6 +97,7 @@ function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
           </span>
         </div>
         <button
+          type="button"
           onClick={() => onEdit(entry.id)}
           className="px-3 py-1 border border-green-300 rounded-full text-sm text-green-700 hover:bg-green-50"
         >
@@ -110,13 +109,13 @@ function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
 }
 
 // --- NUEVO SUB-COMPONENTE: EntryEditorModal ---
-type EntryEditorModalProps = {
+interface EntryEditorModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (entryData: Omit<EntradaUI, "id"> & { id?: string }) => void;
   tiposDeEntrada: TipoEntrada[];
   initialData: EntradaUI | null; // null para 'Agregar', objeto para 'Editar'
-};
+}
 
 function EntryEditorModal({
   open,
@@ -205,7 +204,7 @@ function EntryEditorModal({
               labelId="tipo-label"
               value={tipo ?? ""}
               label="Tipo de Entrada"
-              onChange={(e) => setTipo(Number(e.target.value) as number)}
+              onChange={(e) => setTipo(Number(e.target.value))}
             >
               {tiposDeEntrada.map((t) => (
                 <MenuItem key={t.id} value={t.id}>
@@ -377,6 +376,7 @@ export default function EntradasSection({
       {!disableAdd && (
         <div className="mb-4">
           <button
+            type="button"
             onClick={openAdd}
             className="w-full bg-green-800 text-white py-3 rounded-lg shadow-md hover:bg-green-900 transition"
             aria-label="Agregar Entrada"

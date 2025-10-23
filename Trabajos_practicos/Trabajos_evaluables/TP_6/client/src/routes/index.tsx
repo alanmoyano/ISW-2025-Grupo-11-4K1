@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import React from "react";
 
 // eslint-disable-next-line
-import Nav from "@/components/nav/Nav";
+import Nav from "@/components/nav/Navbar";
 
 export default function MainPage() {
   return (

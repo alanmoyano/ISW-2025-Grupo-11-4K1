@@ -13,12 +13,13 @@ import EditIcon from "@mui/icons-material/Edit"; // Importamos el icono de edici
 import RemoveIcon from "@mui/icons-material/Remove";
 import { IconButton } from "@mui/material";
 import { createFileRoute } from "@tanstack/react-router";
-import { ThemesContext } from "../components/ThemesContext";
-import { DateChips } from "@/components/boleteria/DateChips";
+import { ThemesContext } from "../components/ThemeContext";
+import DateChips from "../components/boleteria/Date-Chips";
 import EntradasSection, {
   EntradaUI,
-} from "@/components/boleteria/EntradasSection";
-import FormaDePagoSection from "@/components/boleteria/FormaDePagoSection";
+} from "../components/boleteria/Entradas-Section";
+import FormaDePagoSection from "../components/boleteria/FormasDePagoSection";
+import { Button } from "../components/ui/button";
 
 export interface TipoEntrada {
   id: number;
@@ -373,6 +374,12 @@ export default function Boleteria() {
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} />;
 
+  function getClassName(isCurrent: boolean, isComplete: boolean) {
+    if (isCurrent) return "border-green-700 shadow-xl bg-white";
+    if (isComplete) return "border-green-300 bg-green-50";
+    return "border-gray-200 bg-gray-100 opacity-60";
+  }
+
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -390,34 +397,31 @@ export default function Boleteria() {
         return (
           <div
             key={stepKey}
-            className={`mb-6 p-4 border rounded-lg transition-all duration-300 ${
-              isCurrent
-                ? "border-green-700 shadow-xl bg-white"
-                : isComplete
-                  ? "border-green-300 bg-green-50" // Color más suave para pasos completados
-                  : "border-gray-200 bg-gray-100 opacity-60" // Estilo para pasos futuros
-            }`}
+            className={`mb-6 p-4 border rounded-lg transition-all duration-300 ${getClassName(isCurrent, isComplete)}`}
           >
             {/* Encabezado del paso */}
-
-            <div
-              className={`flex justify-between items-center ${isComplete ? "cursor-pointer" : ""}`}
-              // Permite volver a un paso completado haciendo click
+            <Button
+              asChild
+              variant="ghost"
               onClick={() => isComplete && setStep(stepKey)}
             >
-              <h2
-                className={`text-xl font-bold ${
-                  isComplete ? "text-gray-600" : "text-green-800"
-                }`}
+              <div
+                className={`flex justify-between items-center ${isComplete ? "cursor-pointer" : ""}`}
+                // Permite volver a un paso completado haciendo click
               >
-                {stepTitles[stepKey]}
-              </h2>
-              {/* Muestra icono de edición si el paso está completo */}
-              {isComplete && (
-                <EditIcon className="text-gray-500 cursor-pointer" />
-              )}
-            </div>
-
+                <h2
+                  className={`text-xl font-bold ${
+                    isComplete ? "text-gray-600" : "text-green-800"
+                  }`}
+                >
+                  {stepTitles[stepKey]}
+                </h2>
+                {/* Muestra icono de edición si el paso está completo */}
+                {isComplete && (
+                  <EditIcon className="text-gray-500 cursor-pointer" />
+                )}
+              </div>
+            </Button>
             {/* Contenido y Navegación */}
             {/* El contenido solo se muestra completamente si es el paso actual */}
             <div
@@ -431,6 +435,7 @@ export default function Boleteria() {
                 <div className="flex gap-2 mt-3">
                   {index > 0 && (
                     <button
+                      type="button"
                       onClick={() => setStep(STEPS[index - 1])}
                       className="px-4 py-2 rounded-md border text-gray-700 hover:bg-gray-100"
                     >
@@ -438,6 +443,7 @@ export default function Boleteria() {
                     </button>
                   )}
                   <button
+                    type="button"
                     onClick={() => setStep(STEPS[index + 1])}
                     disabled={!canNext}
                     className={`px-4 py-2 rounded-md text-white ${
@@ -451,7 +457,6 @@ export default function Boleteria() {
                 </div>
               )}
             </div>
-
             {/* Texto de resumen para pasos completados (visible cuando el contenido está colapsado) */}
             {isComplete && !isCurrent && stepKey !== "revisar" && (
               <div className="text-sm text-gray-500 pt-2">

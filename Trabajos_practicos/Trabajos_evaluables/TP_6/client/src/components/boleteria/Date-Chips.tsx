@@ -1,25 +1,26 @@
 // src/components/boleteria/DateChips.tsx
-import { useContext, useMemo } from "react"; // Se agrega useMemo
-import { ThemesContext } from "../ThemesContext";
+// @ts-expect-error
+import React, { useContext, useMemo } from "react";
 import { Box, Typography } from "@mui/material";
 import dayjs from "dayjs";
+import { ThemesContext } from "../ThemeContext";
 
 // --- Constantes ---
 const CUTOFF_HOUR = 21; // 9 PM
 
 // --- Tipos ---
-type DateChipsProps = {
+interface DateChipsProps {
   availableDates: string[]; // YYYY-MM-DD
   selectedDate: string | null;
   onSelect: (date: string) => void;
-  holidays?: string[]; // YYYY-MM-DD
-  maxAdvanceDays?: number; // default 2
-};
+  holidays: string[]; // YYYY-MM-DD
+  maxAdvanceDays: number; // default 2
+}
 
-type ValidationStatus = {
+interface ValidationStatus {
   selectable: boolean;
   reason?: string;
-};
+}
 
 // --- Hook de Validación (refactorizado) ---
 // Se mueve la lógica de validación a un hook o función pura
@@ -74,7 +75,7 @@ function useDateValidation(
 }
 
 // --- Componente ---
-export function DateChips({
+export default function DateChips({
   availableDates,
   selectedDate,
   onSelect,
@@ -85,6 +86,12 @@ export function DateChips({
 
   // Obtenemos la función validadora del hook
   const validateDate = useDateValidation(holidays, maxAdvanceDays);
+
+  function getColor(isSelected: boolean, selectable: boolean) {
+    if (isSelected) return "common.white";
+    if (selectable) return theme.colors.verdePakistani;
+    return "text.disabled";
+  }
 
   return (
     <Box
@@ -154,11 +161,7 @@ export function DateChips({
                 border: "1px solid",
                 borderColor: theme.colors.verdePakistani,
                 bgcolor: isSelected ? theme.colors.verdeIndia : "common.white",
-                color: isSelected
-                  ? "common.white"
-                  : selectable
-                    ? theme.colors.verdePakistani
-                    : "text.disabled",
+                color: getColor(isSelected, selectable),
                 fontWeight: "bold",
                 transition: "transform .12s, box-shadow .12s",
                 boxShadow: isSelected ? 3 : "none",

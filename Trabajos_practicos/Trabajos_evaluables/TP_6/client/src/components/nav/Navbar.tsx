@@ -1,7 +1,7 @@
 // @ts-expect-error
 import React, { useContext } from "react";
 import { Link } from "@tanstack/react-router";
-import { ThemesContext } from "../themesContext";
+import { ThemesContext } from "../ThemeContext";
 
 export default function Nav() {
   const { theme } = useContext(ThemesContext);

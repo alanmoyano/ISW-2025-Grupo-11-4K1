@@ -1,35 +1,35 @@
 // src/components/boleteria/formaDePagoSection.tsx
 import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
-import { ThemesContext } from "@/components/ThemesContext";
-import LogoPagoEfectivo from "@/assets/logos/LogoPagoEfectivo.svg";
-import LogoMercadoPago from "@/assets/logos/LogoMercadoPago.svg";
+import { ThemesContext } from "../ThemeContext";
+import LogoPagoEfectivo from "../../assets/logos/LogoPagoEfectivo.svg";
+import LogoMercadoPago from "../../assets/logos/LogoMercadoPago.svg";
 
 // --- Tipos (sin cambios) ---
-type FormaDePago = {
+interface FormaDePago {
   id: number;
   nombre: string;
-};
+}
 
-type Props = {
+interface Props {
   selected: number | null;
   onSelect: (id: number) => void;
   formasDePago: FormaDePago[];
-};
+}
 
 // Mapeo (sin cambios)
-const logoMap: { [key: number]: string } = {
+const logoMap: Record<number, string> = {
   1: LogoPagoEfectivo,
   2: LogoMercadoPago,
 };
 
 // --- NUEVO SUB-COMPONENTE: PaymentOption ---
-type PaymentOptionProps = {
+interface PaymentOptionProps {
   option: FormaDePago;
   isSelected: boolean;
   onSelect: (id: number) => void;
   colors: { green: string; greenDark: string };
-};
+}
 
 function PaymentOption({
   option,
