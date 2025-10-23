@@ -1,5 +1,3 @@
-// src/components/boleteria/EntradasSection.tsx
-
 import React, { useState, useMemo, useEffect, useContext } from "react";
 import {
   Dialog,
