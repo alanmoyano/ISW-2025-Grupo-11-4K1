@@ -132,6 +132,10 @@ describe("Validación del formulario de compra de entradas", () => {
     });
 
     it("Debe aceptar una cantidad entre 1 y 10", () => {
+      const mañana = new Date();
+      mañana.setDate(mañana.getDate() + 1);
+      const mañanaString = mañana.toISOString().split("T")[0];
+
       const pedido: Pedido = {
         idPedido: 1,
         usuarioId: 1,
@@ -143,7 +147,7 @@ describe("Validación del formulario de compra de entradas", () => {
           utilizada: false,
         }),
         idFormaDePago: 1,
-        fecha: "2025-10-23",
+        fecha: mañanaString,
         total: 1000,
       };
 
