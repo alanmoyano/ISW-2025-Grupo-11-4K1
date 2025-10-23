@@ -169,7 +169,7 @@ describe("Post Data tests", () => {
         numeroTarjeta: 1234556789012345,
         fechaVencimiento: "12/29",
         codigoSeguridad: 666,
-      },z
+      },
     });
     expect(respone.status).toBe(402);
     const { data, success } = await respone.json();
