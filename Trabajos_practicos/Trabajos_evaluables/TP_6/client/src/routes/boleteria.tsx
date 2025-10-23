@@ -403,12 +403,6 @@ export default function Boleteria() {
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} />;
 
-  function getClassName(isCurrent: boolean, isComplete: boolean) {
-    if (isCurrent) return "border-green-700 shadow-xl bg-white";
-    if (isComplete) return "border-green-300 bg-green-50";
-    return "border-gray-200 bg-gray-100 opacity-60";
-  }
-
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
