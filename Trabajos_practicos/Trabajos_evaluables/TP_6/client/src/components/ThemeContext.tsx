@@ -14,6 +14,8 @@ export const ValoresContexto = {
       verdePigmento: "#3DA35D",
       verdeClaro: "#96E072",
       nyanza: "#E8FCCF",
+      rojo: "#FF0000",
+      rojoOscuro: "#8B0000",
     },
   },
 };

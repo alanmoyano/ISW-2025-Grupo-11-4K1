@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useContext } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,14 +14,19 @@ import {
   Box,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+// Asegúrate de que la importación de ThemeContext sea la correcta
+import { ThemesContext } from "../ThemeContext";
 
-// --- Tipos (sin cambios) ---
+// --- Tipos y Constantes---
 export interface TipoEntrada {
   id: number;
   nombre: string;
   precio: number;
 }
+// Aunque la lógica de precios (edad <= 3 es 0) hace que este ID sea
+// menos crítico, lo mantenemos por si la data del backend lo sigue usando.
 const MENOR_ID = 3;
+
 export interface EntradaUI {
   id: string;
   tipoEntradaId: number;
@@ -29,36 +34,66 @@ export interface EntradaUI {
   precioCalculado: number;
 }
 
-// --- Función de Cálculo (sin cambios) ---
-// Esta función está bien definida y aislada.
+// --- Función de Cálculo (AJUSTADA AL BACKEND TEST) ---
+/**
+ * Calcula el precio basado en los tests del backend (precioUtils.test.ts).
+ * 1. Edad <= 3 es siempre 0.
+ * 2. Edad 4-10 tiene 50% de descuento.
+ * 3. Edad >= 60 tiene 50% de descuento.
+ */
 function calcularPrecio(
   tipoId: number,
   edad: number,
   tiposDeEntrada: TipoEntrada[],
 ) {
-  // ... (lógica sin cambios)
   const tipo = tiposDeEntrada.find((t) => t.id === tipoId);
   if (!tipo) return { precioFinal: 0, precioOriginal: 0 };
+
   const original = tipo.precio;
-  if (tipo.id === MENOR_ID) {
-    return { precioFinal: original, precioOriginal: original };
+
+  // AJUSTE 1: Basado en precioUtils.test.ts (Test 1: edad 3 = $0)
+  // Esta regla tiene prioridad.
+  if (edad <= 3) {
+    // Devolvemos 0, pero mantenemos el 'precioOriginal' del ticket seleccionado
+    // por si es útil para analíticas, aunque el backend test 1 no lo especifica.
+    // Si el tipo es MENOR_ID, el original ya es 0.
+    return { precioFinal: 0, precioOriginal: original };
   }
+
+  // Si el tipo es MENOR_ID (precio 0) y la edad es > 3 (ej. 4),
+  // el precio final seguirá siendo 0, lo cual es incorrecto.
+  // La validación en el modal ahora previene esto.
+  // (Aunque la validación estricta de MENOR_ID fue removida,
+  // la lógica de precio 0 para edad <= 3 la reemplaza).
+
   let multiplier = 1;
-  if (edad >= 3 && edad <= 10) multiplier = 0.5;
+
+  // AJUSTE 2: El rango de descuento para niños ahora es de 4 a 10.
+  if (edad > 3 && edad <= 10) multiplier = 0.5;
   else if (edad >= 60) multiplier = 0.5;
+
   const finalPrice = Math.round(original * multiplier);
   return { precioFinal: finalPrice, precioOriginal: original };
 }
 
-// --- Función de Rango (sin cambios) ---
+// --- Función de Rango (AJUSTADA AL BACKEND TEST) ---
+/**
+ * Mapea la edad a un rango.
+ * "Infante" (0-3) es el grupo gratuito según precioUtils.test.ts.
+ */
 function edadToRango(edad: number) {
-  if (edad < 3) return "Infante";
-  if (edad >= 3 && edad <= 10) return "Menor";
+  // AJUSTE 3: Infante ahora incluye 3 años, para coincidir con el precio 0.
+  if (edad <= 3) return "Infante";
+  if (edad > 3 && edad <= 10) return "Menor";
   if (edad >= 60) return "Adulto Mayor";
   return "Joven - Adulto";
 }
 
-// --- NUEVO SUB-COMPONENTE: EntradaCard ---
+const MAX_AGE = 110;
+
+// ----------------------------------------------------------------------
+// --- COMPONENTE: EntradaCard (Sin cambios) ---
+// ----------------------------------------------------------------------
 interface EntradaCardProps {
   entry: EntradaUI;
   tiposDeEntrada: TipoEntrada[];
@@ -66,9 +101,9 @@ interface EntradaCardProps {
 }
 
 function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
+  const { theme } = useContext(ThemesContext);
   const tipoObj = tiposDeEntrada.find((t) => t.id === entry.tipoEntradaId);
 
-  // Manejo de caso borde: el tipo de entrada no existe
   if (!tipoObj) {
     console.warn(
       `No se encontró el tipo de entrada ID: ${entry.tipoEntradaId}`,
@@ -80,9 +115,17 @@ function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
   const mostrarOriginal = entry.precioCalculado < tipoObj.precio;
 
   return (
-    <div className="w-full rounded-xl border border-green-200 bg-white p-4 mb-4 flex items-center justify-between">
+    <div
+      className="w-full rounded-xl border bg-white p-4 mb-4 flex items-center justify-between"
+      style={{ borderColor: theme.colors.verdePakistani }}
+    >
       <div>
-        <div className="text-xl font-semibold text-green-800">{rango}</div>
+        <div
+          className="text-xl font-semibold"
+          style={{ color: theme.colors.verdePakistani }}
+        >
+          {rango}
+        </div>
         <div className="text-sm text-yellow-700 mt-1">{tipoObj.nombre}</div>
       </div>
       <div className="flex flex-col items-end gap-2">
@@ -92,14 +135,21 @@ function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
               ${tipoObj.precio.toLocaleString()}
             </span>
           )}
-          <span className="text-lg font-semibold text-green-700">
+          <span
+            className="text-lg font-semibold"
+            style={{ color: theme.colors.verdeIndia }}
+          >
             ${entry.precioCalculado.toLocaleString()}
           </span>
         </div>
         <button
           type="button"
           onClick={() => onEdit(entry.id)}
-          className="px-3 py-1 border border-green-300 rounded-full text-sm text-green-700 hover:bg-green-50"
+          className="px-3 py-1 border rounded-full text-sm hover:opacity-90 transition"
+          style={{
+            borderColor: theme.colors.verdeClaro,
+            color: theme.colors.verdeIndia,
+          }}
         >
           Editar
         </button>
@@ -108,13 +158,15 @@ function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
   );
 }
 
-// --- NUEVO SUB-COMPONENTE: EntryEditorModal ---
+// ----------------------------------------------------------------------
+// --- COMPONENTE: EntryEditorModal (Validación AJUSTADA) ---
+// ----------------------------------------------------------------------
 interface EntryEditorModalProps {
   open: boolean;
   onClose: () => void;
   onSave: (entryData: Omit<EntradaUI, "id"> & { id?: string }) => void;
   tiposDeEntrada: TipoEntrada[];
-  initialData: EntradaUI | null; // null para 'Agregar', objeto para 'Editar'
+  initialData: EntradaUI | null;
 }
 
 function EntryEditorModal({
@@ -124,10 +176,10 @@ function EntryEditorModal({
   tiposDeEntrada,
   initialData,
 }: EntryEditorModalProps) {
+  const { theme } = useContext(ThemesContext);
   const [tipo, setTipo] = useState<number | null>(null);
   const [edad, setEdad] = useState<number | null>(null);
 
-  // Efecto para poblar el modal al editar
   useEffect(() => {
     if (open) {
       setTipo(initialData?.tipoEntradaId ?? null);
@@ -135,18 +187,37 @@ function EntryEditorModal({
     }
   }, [open, initialData]);
 
-  // Lógica de validación
+  // Lógica de validación (AJUSTADA)
   const validation = useMemo(() => {
     if (tipo === null) return { valid: false, error: "Seleccione un tipo." };
     if (edad === null || Number.isNaN(edad) || edad < 0) {
-      return { valid: false, error: "Ingrese una edad válida." };
+      return { valid: false, error: "Ingrese una edad válida (0 o mayor)." };
     }
-    if (tipo === MENOR_ID && edad >= 3) {
-      return { valid: false, error: "Debe ser menor a 3 años para este tipo." };
+
+    if (edad > MAX_AGE) {
+      return {
+        valid: false,
+        error: `La edad máxima permitida es ${MAX_AGE} años.`,
+      };
     }
-    if (tipo !== MENOR_ID && edad < 3) {
-      return { valid: false, error: "Use el tipo 'Menor de 3 años'." };
+
+    // REGLA AGREGADA: Si la edad es 3 o menor, el tipo DEBE ser 'Menor de 3 años' (MENOR_ID).
+    if (tipo !== MENOR_ID && edad <= 3) {
+      return {
+        valid: false,
+        error:
+          "Si la edad es 3 o menor, debe seleccionar el tipo 'Menor de 3 años'.",
+      };
     }
+
+    // REGLA MANTENIDA: El tipo "Menor de 3 años" solo puede tener edad <= 3.
+    if (tipo === MENOR_ID && edad > 3) {
+      return {
+        valid: false,
+        error: "El tipo 'Menor de 3 años' es solo para 0-3 años.",
+      };
+    }
+
     return { valid: true, error: null };
   }, [tipo, edad]);
 
@@ -155,7 +226,7 @@ function EntryEditorModal({
 
     const { precioFinal } = calcularPrecio(tipo, edad, tiposDeEntrada);
     onSave({
-      id: initialData?.id, // Pasa el ID si estamos editando
+      id: initialData?.id,
       tipoEntradaId: tipo,
       edadVisitante: edad,
       precioCalculado: precioFinal,
@@ -163,31 +234,35 @@ function EntryEditorModal({
     onClose();
   };
 
-  // Cálculo de precio para el resumen
   const priceSummary = useMemo(() => {
-    if (tipo === null || edad === null) return null;
+    // No calcular si faltan datos o la validación básica falla
+    if (tipo === null || edad === null || !validation.valid) return null;
+
     const tipoObj = tiposDeEntrada.find((x) => x.id === tipo);
     if (!tipoObj) return null;
 
+    // Usamos la nueva función de cálculo
     const { precioFinal, precioOriginal } = calcularPrecio(
       tipo,
       edad,
       tiposDeEntrada,
     );
     const descuento = precioOriginal - precioFinal;
-
     return {
       original: precioOriginal,
       descuentoTexto: descuento > 0 ? `-$${descuento.toLocaleString()}` : "-",
       final: precioFinal,
     };
-  }, [tipo, edad, tiposDeEntrada]);
+  }, [tipo, edad, tiposDeEntrada, validation.valid]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>
         <div className="flex justify-between items-center">
-          <div className="text-green-800 text-lg font-bold">
+          <div
+            className="text-lg font-bold"
+            style={{ color: theme.colors.verdePakistani }}
+          >
             {initialData ? "Editar Entrada" : "Agregar Entrada"}
           </div>
           <IconButton onClick={onClose}>
@@ -225,16 +300,17 @@ function EntryEditorModal({
                   : Math.max(0, Number(e.target.value)),
               )
             }
-            inputProps={{ min: 0 }}
+            inputProps={{ min: 0, max: MAX_AGE }}
             fullWidth
-            // Mostramos el error de validación
-            error={!validation.valid && edad !== null}
+            error={!validation.valid && edad !== null && edad >= 0} // Mostrar error si es inválido
             helperText={
-              !validation.valid && edad !== null ? validation.error : ""
+              !validation.valid && edad !== null && edad >= 0
+                ? validation.error
+                : ""
             }
           />
 
-          {/* Resumen de precios */}
+          {/* Resumen de precios (sin cambios en JSX) */}
           <div className="mt-2">
             {!priceSummary && (
               <div className="text-gray-500">
@@ -243,20 +319,22 @@ function EntryEditorModal({
             )}
             {priceSummary && (
               <div className="w-full">
-                {/* ... (JSX del resumen de precios sin cambios) ... */}
                 <div className="flex justify-between text-sm text-gray-600 mb-1">
                   <div>Precio Entrada</div>
                   <div>${priceSummary.original.toLocaleString()}</div>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600 mb-1">
                   <div>Descuento</div>
-                  <div className="text-green-700 font-medium">
+                  <div
+                    className="font-medium"
+                    style={{ color: theme.colors.verdeIndia }}
+                  >
                     {priceSummary.descuentoTexto}
                   </div>
                 </div>
                 <div className="flex justify-between text-base font-semibold mt-2">
                   <div>Precio Final:</div>
-                  <div className="text-green-800">
+                  <div style={{ color: theme.colors.verdePakistani }}>
                     ${priceSummary.final.toLocaleString()}
                   </div>
                 </div>
@@ -270,19 +348,24 @@ function EntryEditorModal({
         <Button
           variant="outlined"
           onClick={onClose}
-          sx={{ borderColor: "green.400", color: "green.700" }}
+          sx={{
+            borderColor: theme.colors.verdeClaro,
+            color: theme.colors.verdeIndia,
+          }}
         >
           Cancelar
         </Button>
         <Button
           variant="contained"
           onClick={handleSave}
-          // Deshabilitado si no es válido
           disabled={!validation.valid}
           sx={{
-            backgroundColor: "green.700",
-            "&:hover": { backgroundColor: "green.800" },
-            "&:disabled": { backgroundColor: "grey.300" },
+            backgroundColor: theme.colors.verdeIndia,
+            "&:hover": { backgroundColor: theme.colors.verdePakistani },
+            "&:disabled": {
+              backgroundColor: theme.colors.grisOscuro,
+              color: "white", // Mejorar legibilidad en modo disabled
+            },
           }}
         >
           Aceptar
@@ -292,7 +375,9 @@ function EntryEditorModal({
   );
 }
 
-/* ---------------- EntradasSection (Ahora mucho más limpio) ---------------- */
+// ----------------------------------------------------------------------
+// --- COMPONENTE: EntradasSection (Sin cambios) ---
+// ----------------------------------------------------------------------
 export default function EntradasSection({
   quantity,
   entries,
@@ -301,28 +386,21 @@ export default function EntradasSection({
 }: {
   quantity: number;
   entries: EntradaUI[];
-  // REFACTOR: Tipo de prop corregido
   setEntries: React.Dispatch<React.SetStateAction<EntradaUI[]>>;
   tiposDeEntrada: TipoEntrada[];
 }) {
+  const { theme } = useContext(ThemesContext);
   const [modalOpen, setModalOpen] = useState(false);
-  // Guardamos la ENTRADA completa a editar, no solo el ID
   const [editingEntry, setEditingEntry] = useState<EntradaUI | null>(null);
 
   const handleSaveEntry = (
     entryData: Omit<EntradaUI, "id"> & { id?: string },
   ) => {
-    // Si tiene ID, es una edición
     if (entryData.id) {
       setEntries((prev) =>
-        prev.map((e) =>
-          e.id === entryData.id
-            ? { ...e, ...entryData } // Actualiza la entrada
-            : e,
-        ),
+        prev.map((e) => (e.id === entryData.id ? { ...e, ...entryData } : e)),
       );
     } else {
-      // Si no, es una adición
       const newEntry: EntradaUI = {
         ...entryData,
         id: String(Date.now()) + Math.random().toString(36).slice(2, 7),
@@ -335,7 +413,7 @@ export default function EntradasSection({
 
   const openAdd = () => {
     if (entries.length >= quantity) return;
-    setEditingEntry(null); // Asegura que es modo 'add'
+    setEditingEntry(null);
     setModalOpen(true);
   };
 
@@ -352,10 +430,15 @@ export default function EntradasSection({
   return (
     <Box className="mb-6">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-gray-700 font-semibold">Entradas</h3>
+        <h3
+          className="text-gray-700 font-semibold"
+          style={{ color: theme.colors.verdePakistani }}
+        >
+          Entradas
+        </h3>
       </div>
 
-      {/* Lista de Entradas (ahora usa el sub-componente) */}
+      {/* Lista de Entradas */}
       <div>
         {entries.length === 0 && (
           <div className="text-gray-400 mb-2">
@@ -378,7 +461,8 @@ export default function EntradasSection({
           <button
             type="button"
             onClick={openAdd}
-            className="w-full bg-green-800 text-white py-3 rounded-lg shadow-md hover:bg-green-900 transition"
+            className="w-full text-white py-3 rounded-lg shadow-md hover:opacity-90 transition"
+            style={{ backgroundColor: theme.colors.verdePakistani }}
             aria-label="Agregar Entrada"
           >
             + Agregar Entrada
@@ -386,7 +470,7 @@ export default function EntradasSection({
         </div>
       )}
 
-      {/* Modal (ahora es un componente separado) */}
+      {/* Modal */}
       <EntryEditorModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
