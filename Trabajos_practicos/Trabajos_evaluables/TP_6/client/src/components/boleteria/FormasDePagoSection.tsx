@@ -38,7 +38,6 @@ function PaymentOption({
   colors,
 }: PaymentOptionProps) {
   // Se usa un logo por defecto si el ID no está en el map.
-  // TODO: Considerar un icono genérico en lugar de repetir 'Efectivo'.
   const logo = logoMap[option.id] || LogoPagoEfectivo;
   const { green, greenDark } = colors;
 
@@ -113,7 +112,7 @@ function PaymentOption({
   );
 }
 
-// --- Componente Principal (Ahora más limpio) ---
+// --- Componente Principal---
 export default function FormaDePagoSection({
   selected,
   onSelect,

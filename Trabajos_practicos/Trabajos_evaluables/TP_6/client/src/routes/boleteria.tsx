@@ -1,4 +1,3 @@
-// @ts-expect-error
 import React, {
   JSX,
   useCallback,
@@ -12,14 +11,13 @@ import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit"; // Importamos el icono de edición
 import RemoveIcon from "@mui/icons-material/Remove";
 import { IconButton } from "@mui/material";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ThemesContext } from "../components/ThemeContext";
 import DateChips from "../components/boleteria/Date-Chips";
 import EntradasSection, {
   EntradaUI,
 } from "../components/boleteria/Entradas-Section";
 import FormaDePagoSection from "../components/boleteria/FormasDePagoSection";
-import { Button } from "../components/ui/button";
 
 export interface TipoEntrada {
   id: number;
@@ -56,7 +54,7 @@ function ErrorState({ error }: { error: string }) {
   );
 }
 
-// --- Componente Selector de Cantidad (sin cambios) ---
+// --- Componente Selector de Cantidad (Refactorizado) ---
 function QuantitySelector({
   value,
   onChange,
@@ -80,7 +78,9 @@ function QuantitySelector({
         <IconButton
           onClick={() => onChange(Math.max(1, value - 1))}
           size="small"
-          className="border border-green-300"
+          className="border"
+          // Uso del color de tema para el borde
+          style={{ borderColor: theme.colors.verdeClaro }}
         >
           <RemoveIcon />
         </IconButton>
@@ -90,7 +90,9 @@ function QuantitySelector({
         <IconButton
           onClick={() => onChange(Math.min(10, value + 1))}
           size="small"
-          className="border border-green-300"
+          className="border"
+          // Uso del color de tema para el borde
+          style={{ borderColor: theme.colors.verdeClaro }}
         >
           <AddIcon />
         </IconButton>
@@ -99,11 +101,10 @@ function QuantitySelector({
   );
 }
 
-// --- Componente Contenedor de Paso (ELIMINADO, la lógica se mueve al renderizado) ---
-
 // --- Página Principal Boletería ---
 export default function Boleteria() {
   const { theme } = useContext(ThemesContext);
+  const navigate = useNavigate();
 
   // fechas (sin cambios)
   const availableDates = ["2025-10-22", "2025-10-23", "2025-10-24"];
@@ -134,7 +135,6 @@ export default function Boleteria() {
 
   // --- Carga de datos desde el Backend (sin cambios) ---
   useEffect(() => {
-    // ... (lógica de carga de datos sin cambios) ...
     async function loadInitialData() {
       try {
         setLoading(true);
@@ -224,7 +224,6 @@ export default function Boleteria() {
 
   // eslint-disable-next-line consistent-return
   const handleSubmit = useCallback(async () => {
-    // ... (lógica handleSubmit sin cambios) ...
     if (!canNextFromFecha) return alert("Seleccioná una fecha");
     if (!canNextFromEntradas)
       return alert(`Debes agregar exactamente ${quantity} entradas`);
@@ -264,6 +263,7 @@ export default function Boleteria() {
       setQuantity(1);
       setPaymentMethod(FormaPagoEnum.EFECTIVO);
       setStep("fecha");
+      navigate({ to: "/" });
     } catch (err: any) {
       console.error(err);
       alert(`Error al enviar pedido: ${err?.message ?? err}`);
@@ -278,7 +278,7 @@ export default function Boleteria() {
     buildRequestBody,
   ]);
 
-  // --- Mapeo de contenido de pasos ---
+  // --- Mapeo de contenido de pasos (sin cambios en la estructura, solo estilos) ---
   const stepContentMap: Record<Step, JSX.Element> = {
     fecha: (
       <>
@@ -323,7 +323,11 @@ export default function Boleteria() {
           <h3 className="text-gray-700 font-semibold">Resumen</h3>
           <div className="text-sm text-gray-600">
             Total:{" "}
-            <span className="font-semibold text-green-700">
+            <span
+              className="font-semibold"
+              // Uso del color de tema
+              style={{ color: theme.colors.verdeIndia }}
+            >
               ${total.toLocaleString()}
             </span>
           </div>
@@ -334,10 +338,7 @@ export default function Boleteria() {
             <strong>Fecha:</strong> {selectedDate ?? "-"}
           </div>
           <div>
-            <strong>Cantidad elegida:</strong> {quantity}
-          </div>
-          <div>
-            <strong>Entradas agregadas:</strong> {entries.length}
+            <strong>Cantidad de entradas:</strong> {entries.length}
           </div>
           <div>
             <strong>Forma de pago:</strong>{" "}
@@ -345,14 +346,15 @@ export default function Boleteria() {
           </div>
         </div>
 
-        {/* Botón de envío integrado en el paso de Revisar */}
+        {/* Botón de envío integrado en el paso de Revisar (Refactorizado) */}
         <div className="mb-4">
           <button
             type="submit"
             onClick={handleSubmit}
-            className={`px-4 py-2 rounded-md bg-green-800 text-white ${
-              sending ? "opacity-60" : "hover:bg-green-900"
+            className={`px-4 py-2 rounded-md text-white ${
+              sending ? "opacity-60" : "hover:opacity-90"
             }`}
+            style={{ backgroundColor: theme.colors.verdePakistani }}
             disabled={sending}
           >
             {sending ? "Enviando..." : "Enviar pedido"}
@@ -370,20 +372,45 @@ export default function Boleteria() {
     revisar: "5. Revisar y Confirmar",
   };
 
+  // --- Lógica para aplicar estilos de tema al Stepper ---
+  const getStepStyles = (
+    isCurrent: boolean,
+    isComplete: boolean,
+  ): React.CSSProperties => {
+    if (isCurrent) {
+      return {
+        borderColor: theme.colors.verdePakistani,
+        boxShadow:
+          "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        backgroundColor: "white",
+      };
+    }
+    if (isComplete) {
+      return {
+        borderColor: theme.colors.verdeClaro,
+        backgroundColor: theme.colors.nyanza,
+      };
+    }
+    return {
+      borderColor: theme.colors.gris,
+      backgroundColor: theme.colors.grisClaro,
+      opacity: 0.6,
+    };
+  };
+
   // --- Renderizado Principal (Renders all steps for stepper effect) ---
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} />;
 
-  function getClassName(isCurrent: boolean, isComplete: boolean) {
-    if (isCurrent) return "border-green-700 shadow-xl bg-white";
-    if (isComplete) return "border-green-300 bg-green-50";
-    return "border-gray-200 bg-gray-100 opacity-60";
-  }
-
   return (
     <div className="p-6 max-w-5xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-green-800">Boletería</h1>
+        <h1
+          className="text-3xl font-bold"
+          style={{ color: theme.colors.verdePakistani }}
+        >
+          Boletería
+        </h1>
         <div className="text-sm text-gray-600">{`${currentStepIndex + 1} / ${
           STEPS.length
         }`}</div>
@@ -397,33 +424,32 @@ export default function Boleteria() {
         return (
           <div
             key={stepKey}
-            className={`mb-6 p-4 border rounded-lg transition-all duration-300 ${getClassName(isCurrent, isComplete)}`}
+            className={`mb-6 p-4 border rounded-lg transition-all duration-300`}
+            style={getStepStyles(isCurrent, isComplete)} // Estilos dinámicos
           >
             {/* Encabezado del paso */}
-            <Button
-              asChild
-              variant="ghost"
+            <div
+              className={`flex justify-between items-center ${isComplete ? "cursor-pointer" : ""}`}
               onClick={() => isComplete && setStep(stepKey)}
             >
-              <div
-                className={`flex justify-between items-center ${isComplete ? "cursor-pointer" : ""}`}
-                // Permite volver a un paso completado haciendo click
+              <h2
+                className={`text-xl font-bold ${
+                  isComplete ? "text-gray-600" : ""
+                }`}
+                // Color del título del paso
+                style={{
+                    color: isComplete ? theme.colors.grisOscuro : theme.colors.verdePakistani
+                }}
               >
-                <h2
-                  className={`text-xl font-bold ${
-                    isComplete ? "text-gray-600" : "text-green-800"
-                  }`}
-                >
-                  {stepTitles[stepKey]}
-                </h2>
-                {/* Muestra icono de edición si el paso está completo */}
-                {isComplete && (
-                  <EditIcon className="text-gray-500 cursor-pointer" />
-                )}
-              </div>
-            </Button>
+                {stepTitles[stepKey]}
+              </h2>
+              {/* Muestra icono de edición si el paso está completo */}
+              {isComplete && (
+                <EditIcon className="text-gray-500 cursor-pointer" />
+              )}
+            </div>
+
             {/* Contenido y Navegación */}
-            {/* El contenido solo se muestra completamente si es el paso actual */}
             <div
               className={`transition-all duration-300 overflow-hidden ${isCurrent ? "max-h-screen mt-4 pt-4 border-t" : "max-h-0"}`}
             >
@@ -448,16 +474,22 @@ export default function Boleteria() {
                     disabled={!canNext}
                     className={`px-4 py-2 rounded-md text-white ${
                       !canNext
-                        ? "bg-green-300 cursor-not-allowed opacity-50"
-                        : "bg-green-700 hover:bg-green-800"
+                        ? "cursor-not-allowed opacity-50"
+                        : "hover:opacity-90"
                     }`}
+                    // Estilos de tema para el botón Siguiente
+                    style={{
+                      backgroundColor: !canNext
+                        ? theme.colors.verdeClaro
+                        : theme.colors.verdeIndia,
+                    }}
                   >
                     Siguiente
                   </button>
                 </div>
               )}
             </div>
-            {/* Texto de resumen para pasos completados (visible cuando el contenido está colapsado) */}
+            {/* Texto de resumen para pasos completados */}
             {isComplete && !isCurrent && stepKey !== "revisar" && (
               <div className="text-sm text-gray-500 pt-2">
                 Paso completado. Click en el título para editar.
