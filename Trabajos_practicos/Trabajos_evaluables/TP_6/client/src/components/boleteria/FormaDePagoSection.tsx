@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 import { ThemesContext } from "@/components/ThemesContext";
 import LogoPagoEfectivo from "@/assets/logos/LogoPagoEfectivo.svg";
-import LogoMercadoPago from "@/assets/logos/LogoMercadoPago.svg"; 
+import LogoMercadoPago from "@/assets/logos/LogoMercadoPago.svg";
 
 // --- Tipos (sin cambios) ---
 type FormaDePago = {
@@ -14,7 +14,7 @@ type FormaDePago = {
 type Props = {
   selected: number | null;
   onSelect: (id: number) => void;
-  formasDePago: FormaDePago[]; 
+  formasDePago: FormaDePago[];
 };
 
 // Mapeo (sin cambios)
@@ -31,16 +31,21 @@ type PaymentOptionProps = {
   colors: { green: string; greenDark: string };
 };
 
-function PaymentOption({ option, isSelected, onSelect, colors }: PaymentOptionProps) {
+function PaymentOption({
+  option,
+  isSelected,
+  onSelect,
+  colors,
+}: PaymentOptionProps) {
   // Se usa un logo por defecto si el ID no está en el map.
   // TODO: Considerar un icono genérico en lugar de repetir 'Efectivo'.
-  const logo = logoMap[option.id] || LogoPagoEfectivo; 
+  const logo = logoMap[option.id] || LogoPagoEfectivo;
   const { green, greenDark } = colors;
 
   const handleSelect = () => {
     onSelect(option.id);
   };
-  
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -75,9 +80,7 @@ function PaymentOption({ option, isSelected, onSelect, colors }: PaymentOptionPr
           justifyContent: "center",
           border: `2px solid ${isSelected ? green : "#cfd8d6"}`,
           bgcolor: isSelected ? green : "transparent",
-          boxShadow: isSelected
-            ? "0 6px 14px rgba(39, 124, 62, 0.12)"
-            : "none",
+          boxShadow: isSelected ? "0 6px 14px rgba(39, 124, 62, 0.12)" : "none",
           transition: "all 160ms ease",
         }}
       >
@@ -114,14 +117,14 @@ function PaymentOption({ option, isSelected, onSelect, colors }: PaymentOptionPr
 export default function FormaDePagoSection({
   selected,
   onSelect,
-  formasDePago, 
+  formasDePago,
 }: Props) {
   const { theme } = useContext(ThemesContext);
-  
+
   // Se definen los colores una vez
   const colors = {
-      green: theme?.colors?.verdePakistani ?? "#2f8f4f",
-      greenDark: theme?.colors?.verdePakistani ?? "#256837"
+    green: theme?.colors?.verdePakistani ?? "#2f8f4f",
+    greenDark: theme?.colors?.verdePakistani ?? "#256837",
   };
 
   return (

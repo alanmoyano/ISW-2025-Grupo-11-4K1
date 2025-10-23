@@ -10,7 +10,9 @@ export const Route = createRootRoute({
     <>
       <Nav isMobile={false} />
 
-      <div className="pt-16"> {/* si tu Nav tiene altura fija, agregá padding */}
+      <div className="pt-16">
+        {" "}
+        {/* si tu Nav tiene altura fija, agregá padding */}
         <Outlet />
       </div>
 

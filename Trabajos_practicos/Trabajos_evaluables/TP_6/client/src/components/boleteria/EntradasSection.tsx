@@ -69,10 +69,12 @@ type EntradaCardProps = {
 
 function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
   const tipoObj = tiposDeEntrada.find((t) => t.id === entry.tipoEntradaId);
-  
+
   // Manejo de caso borde: el tipo de entrada no existe
   if (!tipoObj) {
-    console.warn(`No se encontró el tipo de entrada ID: ${entry.tipoEntradaId}`);
+    console.warn(
+      `No se encontró el tipo de entrada ID: ${entry.tipoEntradaId}`,
+    );
     return null;
   }
 
@@ -80,9 +82,7 @@ function EntradaCard({ entry, tiposDeEntrada, onEdit }: EntradaCardProps) {
   const mostrarOriginal = entry.precioCalculado < tipoObj.precio;
 
   return (
-    <div
-      className="w-full rounded-xl border border-green-200 bg-white p-4 mb-4 flex items-center justify-between"
-    >
+    <div className="w-full rounded-xl border border-green-200 bg-white p-4 mb-4 flex items-center justify-between">
       <div>
         <div className="text-xl font-semibold text-green-800">{rango}</div>
         <div className="text-sm text-yellow-700 mt-1">{tipoObj.nombre}</div>
@@ -170,9 +170,13 @@ function EntryEditorModal({
     const tipoObj = tiposDeEntrada.find((x) => x.id === tipo);
     if (!tipoObj) return null;
 
-    const { precioFinal, precioOriginal } = calcularPrecio(tipo, edad, tiposDeEntrada);
+    const { precioFinal, precioOriginal } = calcularPrecio(
+      tipo,
+      edad,
+      tiposDeEntrada,
+    );
     const descuento = precioOriginal - precioFinal;
-    
+
     return {
       original: precioOriginal,
       descuentoTexto: descuento > 0 ? `-$${descuento.toLocaleString()}` : "-",
@@ -181,110 +185,113 @@ function EntryEditorModal({
   }, [tipo, edad, tiposDeEntrada]);
 
   return (
-     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-        <DialogTitle>
-          <div className="flex justify-between items-center">
-            <div className="text-green-800 text-lg font-bold">
-              {initialData ? "Editar Entrada" : "Agregar Entrada"}
-            </div>
-            <IconButton onClick={onClose}><CloseIcon /></IconButton>
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+      <DialogTitle>
+        <div className="flex justify-between items-center">
+          <div className="text-green-800 text-lg font-bold">
+            {initialData ? "Editar Entrada" : "Agregar Entrada"}
           </div>
-        </DialogTitle>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </div>
+      </DialogTitle>
 
-        <DialogContent dividers>
-          <div className="flex flex-col gap-4">
-            <FormControl fullWidth>
-              <InputLabel id="tipo-label">Tipo de Entrada</InputLabel>
-              <Select
-                labelId="tipo-label"
-                value={tipo ?? ""}
-                label="Tipo de Entrada"
-                onChange={(e) => setTipo(Number(e.target.value) as number)}
-              >
-                {tiposDeEntrada.map((t) => (
-                  <MenuItem key={t.id} value={t.id}>
-                    {t.nombre} — ${t.precio.toLocaleString()}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+      <DialogContent dividers>
+        <div className="flex flex-col gap-4">
+          <FormControl fullWidth>
+            <InputLabel id="tipo-label">Tipo de Entrada</InputLabel>
+            <Select
+              labelId="tipo-label"
+              value={tipo ?? ""}
+              label="Tipo de Entrada"
+              onChange={(e) => setTipo(Number(e.target.value) as number)}
+            >
+              {tiposDeEntrada.map((t) => (
+                <MenuItem key={t.id} value={t.id}>
+                  {t.nombre} — ${t.precio.toLocaleString()}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-            <TextField
-              label="Edad"
-              type="number"
-              value={edad ?? ""}
-              onChange={(e) =>
-                setEdad(
-                  e.target.value === ""
-                    ? null
-                    : Math.max(0, Number(e.target.value)),
-                )
-              }
-              inputProps={{ min: 0 }}
-              fullWidth
-              // Mostramos el error de validación
-              error={!validation.valid && edad !== null}
-              helperText={!validation.valid && edad !== null ? validation.error : ""}
-            />
-            
-            {/* Resumen de precios */}
-            <div className="mt-2">
-              {!priceSummary && (
-                <div className="text-gray-500">
-                  Seleccione tipo y edad para ver el precio.
+          <TextField
+            label="Edad"
+            type="number"
+            value={edad ?? ""}
+            onChange={(e) =>
+              setEdad(
+                e.target.value === ""
+                  ? null
+                  : Math.max(0, Number(e.target.value)),
+              )
+            }
+            inputProps={{ min: 0 }}
+            fullWidth
+            // Mostramos el error de validación
+            error={!validation.valid && edad !== null}
+            helperText={
+              !validation.valid && edad !== null ? validation.error : ""
+            }
+          />
+
+          {/* Resumen de precios */}
+          <div className="mt-2">
+            {!priceSummary && (
+              <div className="text-gray-500">
+                Seleccione tipo y edad para ver el precio.
+              </div>
+            )}
+            {priceSummary && (
+              <div className="w-full">
+                {/* ... (JSX del resumen de precios sin cambios) ... */}
+                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                  <div>Precio Entrada</div>
+                  <div>${priceSummary.original.toLocaleString()}</div>
                 </div>
-              )}
-              {priceSummary && (
-                 <div className="w-full">
-                    {/* ... (JSX del resumen de precios sin cambios) ... */}
-                    <div className="flex justify-between text-sm text-gray-600 mb-1">
-                      <div>Precio Entrada</div>
-                      <div>${priceSummary.original.toLocaleString()}</div>
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-600 mb-1">
-                      <div>Descuento</div>
-                      <div className="text-green-700 font-medium">
-                        {priceSummary.descuentoTexto}
-                      </div>
-                    </div>
-                    <div className="flex justify-between text-base font-semibold mt-2">
-                      <div>Precio Final:</div>
-                      <div className="text-green-800">
-                        ${priceSummary.final.toLocaleString()}
-                      </div>
-                    </div>
-                 </div>
-              )}
-            </div>
+                <div className="flex justify-between text-sm text-gray-600 mb-1">
+                  <div>Descuento</div>
+                  <div className="text-green-700 font-medium">
+                    {priceSummary.descuentoTexto}
+                  </div>
+                </div>
+                <div className="flex justify-between text-base font-semibold mt-2">
+                  <div>Precio Final:</div>
+                  <div className="text-green-800">
+                    ${priceSummary.final.toLocaleString()}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
-        </DialogContent>
+        </div>
+      </DialogContent>
 
-        <DialogActions>
-          <Button
-            variant="outlined"
-            onClick={onClose}
-            sx={{ borderColor: "green.400", color: "green.700" }}
-          >
-            Cancelar
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleSave}
-            // Deshabilitado si no es válido
-            disabled={!validation.valid}
-            sx={{
-              backgroundColor: "green.700",
-              "&:hover": { backgroundColor: "green.800" },
-              "&:disabled": { backgroundColor: "grey.300" }
-            }}
-          >
-            Aceptar
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DialogActions>
+        <Button
+          variant="outlined"
+          onClick={onClose}
+          sx={{ borderColor: "green.400", color: "green.700" }}
+        >
+          Cancelar
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handleSave}
+          // Deshabilitado si no es válido
+          disabled={!validation.valid}
+          sx={{
+            backgroundColor: "green.700",
+            "&:hover": { backgroundColor: "green.800" },
+            "&:disabled": { backgroundColor: "grey.300" },
+          }}
+        >
+          Aceptar
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 }
-
 
 /* ---------------- EntradasSection (Ahora mucho más limpio) ---------------- */
 export default function EntradasSection({
