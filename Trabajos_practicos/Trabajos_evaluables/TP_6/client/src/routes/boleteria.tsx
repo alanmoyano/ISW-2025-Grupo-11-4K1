@@ -276,6 +276,7 @@ export default function Boleteria() {
     canNextFromPago,
     quantity,
     buildRequestBody,
+    navigate,
   ]);
 
   // --- Mapeo de contenido de pasos (sin cambios en la estructura, solo estilos) ---
@@ -424,13 +425,23 @@ export default function Boleteria() {
         return (
           <div
             key={stepKey}
-            className={`mb-6 p-4 border rounded-lg transition-all duration-300`}
+            className="mb-6 p-4 border rounded-lg transition-all duration-300"
             style={getStepStyles(isCurrent, isComplete)} // Estilos dinámicos
           >
             {/* Encabezado del paso */}
             <div
-              className={`flex justify-between items-center ${isComplete ? "cursor-pointer" : ""}`}
+              role="button"
+              tabIndex={isComplete ? 0 : -1}
+              className={`flex justify-between items-center ${
+                isComplete ? "cursor-pointer" : ""
+              }`}
               onClick={() => isComplete && setStep(stepKey)}
+              onKeyDown={(e) => {
+                if (isComplete && (e.key === "Enter" || e.key === " ")) {
+                  setStep(stepKey);
+                  e.preventDefault();
+                }
+              }}
             >
               <h2
                 className={`text-xl font-bold ${
@@ -438,7 +449,9 @@ export default function Boleteria() {
                 }`}
                 // Color del título del paso
                 style={{
-                    color: isComplete ? theme.colors.grisOscuro : theme.colors.verdePakistani
+                  color: isComplete
+                    ? theme.colors.grisOscuro
+                    : theme.colors.verdePakistani,
                 }}
               >
                 {stepTitles[stepKey]}

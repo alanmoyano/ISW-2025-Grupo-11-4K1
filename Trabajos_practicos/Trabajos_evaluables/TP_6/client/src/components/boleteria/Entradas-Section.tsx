@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 // Asegúrate de que la importación de ThemeContext sea la correcta
-import { ThemesContext } from "../ThemeContext"; 
+import { ThemesContext } from "../ThemeContext";
 
 // --- Tipos y Constantes---
 export interface TipoEntrada {
@@ -27,7 +27,7 @@ export interface TipoEntrada {
 }
 // Aunque la lógica de precios (edad <= 3 es 0) hace que este ID sea
 // menos crítico, lo mantenemos por si la data del backend lo sigue usando.
-const MENOR_ID = 3; 
+const MENOR_ID = 3;
 
 export interface EntradaUI {
   id: string;
@@ -50,7 +50,7 @@ function calcularPrecio(
 ) {
   const tipo = tiposDeEntrada.find((t) => t.id === tipoId);
   if (!tipo) return { precioFinal: 0, precioOriginal: 0 };
-  
+
   const original = tipo.precio;
 
   // AJUSTE 1: Basado en precioUtils.test.ts (Test 1: edad 3 = $0)
@@ -69,7 +69,7 @@ function calcularPrecio(
   // la lógica de precio 0 para edad <= 3 la reemplaza).
 
   let multiplier = 1;
-  
+
   // AJUSTE 2: El rango de descuento para niños ahora es de 4 a 10.
   if (edad > 3 && edad <= 10) multiplier = 0.5;
   else if (edad >= 60) multiplier = 0.5;
@@ -85,7 +85,7 @@ function calcularPrecio(
  */
 function edadToRango(edad: number) {
   // AJUSTE 3: Infante ahora incluye 3 años, para coincidir con el precio 0.
-  if (edad <= 3) return "Infante"; 
+  if (edad <= 3) return "Infante";
   if (edad > 3 && edad <= 10) return "Menor";
   if (edad >= 60) return "Adulto Mayor";
   return "Joven - Adulto";
@@ -194,21 +194,31 @@ function EntryEditorModal({
     if (tipo === null) return { valid: false, error: "Seleccione un tipo." };
     if (edad === null || Number.isNaN(edad) || edad < 0) {
       return { valid: false, error: "Ingrese una edad válida (0 o mayor)." };
-    } 
+    }
 
     if (edad > MAX_AGE) {
-      return { valid: false, error: `La edad máxima permitida es ${MAX_AGE} años.` };
-  }
+      return {
+        valid: false,
+        error: `La edad máxima permitida es ${MAX_AGE} años.`,
+      };
+    }
 
     // REGLA AGREGADA: Si la edad es 3 o menor, el tipo DEBE ser 'Menor de 3 años' (MENOR_ID).
     if (tipo !== MENOR_ID && edad <= 3) {
-      return { valid: false, error: "Si la edad es 3 o menor, debe seleccionar el tipo 'Menor de 3 años'." };
-     }
+      return {
+        valid: false,
+        error:
+          "Si la edad es 3 o menor, debe seleccionar el tipo 'Menor de 3 años'.",
+      };
+    }
 
     // REGLA MANTENIDA: El tipo "Menor de 3 años" solo puede tener edad <= 3.
     if (tipo === MENOR_ID && edad > 3) {
-      return { valid: false, error: "El tipo 'Menor de 3 años' es solo para 0-3 años." };
-     }
+      return {
+        valid: false,
+        error: "El tipo 'Menor de 3 años' es solo para 0-3 años.",
+      };
+    }
 
     return { valid: true, error: null };
   }, [tipo, edad]);
@@ -228,11 +238,11 @@ function EntryEditorModal({
 
   const priceSummary = useMemo(() => {
     // No calcular si faltan datos o la validación básica falla
-    if (tipo === null || edad === null || !validation.valid) return null; 
-    
+    if (tipo === null || edad === null || !validation.valid) return null;
+
     const tipoObj = tiposDeEntrada.find((x) => x.id === tipo);
     if (!tipoObj) return null;
-    
+
     // Usamos la nueva función de cálculo
     const { precioFinal, precioOriginal } = calcularPrecio(
       tipo,
@@ -292,11 +302,13 @@ function EntryEditorModal({
                   : Math.max(0, Number(e.target.value)),
               )
             }
-            inputProps={{ min: 0, max: MAX_AGE }} 
+            inputProps={{ min: 0, max: MAX_AGE }}
             fullWidth
-            error={!validation.valid && (edad !== null && edad >= 0)} // Mostrar error si es inválido
+            error={!validation.valid && edad !== null && edad >= 0} // Mostrar error si es inválido
             helperText={
-              !validation.valid && (edad !== null && edad >= 0) ? validation.error : ""
+              !validation.valid && edad !== null && edad >= 0
+                ? validation.error
+                : ""
             }
           />
 
@@ -324,9 +336,7 @@ function EntryEditorModal({
                 </div>
                 <div className="flex justify-between text-base font-semibold mt-2">
                   <div>Precio Final:</div>
-                  <div
-                    style={{ color: theme.colors.verdePakistani }}
-                  >
+                  <div style={{ color: theme.colors.verdePakistani }}>
                     ${priceSummary.final.toLocaleString()}
                   </div>
                 </div>
@@ -354,9 +364,9 @@ function EntryEditorModal({
           sx={{
             backgroundColor: theme.colors.verdeIndia,
             "&:hover": { backgroundColor: theme.colors.verdePakistani },
-            "&:disabled": { 
+            "&:disabled": {
               backgroundColor: theme.colors.grisOscuro,
-              color: "white" // Mejorar legibilidad en modo disabled
+              color: "white", // Mejorar legibilidad en modo disabled
             },
           }}
         >
@@ -390,9 +400,7 @@ export default function EntradasSection({
   ) => {
     if (entryData.id) {
       setEntries((prev) =>
-        prev.map((e) =>
-          e.id === entryData.id ? { ...e, ...entryData } : e,
-        ),
+        prev.map((e) => (e.id === entryData.id ? { ...e, ...entryData } : e)),
       );
     } else {
       const newEntry: EntradaUI = {
@@ -423,8 +431,13 @@ export default function EntradasSection({
 
   return (
     <Box className="mb-6">
-      <div className="flex items-center justify-between mb-3" >
-        <h3 className="text-gray-700 font-semibold" style={{color: theme.colors.verdePakistani}}>Entradas</h3>
+      <div className="flex items-center justify-between mb-3">
+        <h3
+          className="text-gray-700 font-semibold"
+          style={{ color: theme.colors.verdePakistani }}
+        >
+          Entradas
+        </h3>
       </div>
 
       {/* Lista de Entradas */}
