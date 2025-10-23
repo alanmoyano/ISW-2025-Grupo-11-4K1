@@ -31,7 +31,10 @@
     "happy-dom": "^20.0.5",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "dayjs": "^1.11.18",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1"
   },
   "devDependencies": {
     "@tanstack/router-plugin": "^1.133.3",

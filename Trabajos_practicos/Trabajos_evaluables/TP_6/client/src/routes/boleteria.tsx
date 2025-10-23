@@ -1,36 +1,36 @@
-// src/routes/boleteria.tsx
-
+// @ts-expect-error
 import React, {
+  JSX,
+  useCallback,
+  useContext,
+  useEffect,
   useMemo,
   useState,
-  useEffect,
-  useContext,
-  useCallback,
-  JSX,
 } from "react";
-import { IconButton, Typography, useMediaQuery } from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import EditIcon from "@mui/icons-material/Edit"; // Importamos el icono de edición
+import RemoveIcon from "@mui/icons-material/Remove";
+import { IconButton } from "@mui/material";
 import { createFileRoute } from "@tanstack/react-router";
-import { ThemesContext } from "../components/ThemesContext";
-import { DateChips } from "@/components/boleteria/DateChips";
+import { ThemesContext } from "../components/ThemeContext";
+import DateChips from "../components/boleteria/Date-Chips";
 import EntradasSection, {
   EntradaUI,
-} from "@/components/boleteria/entradasSection";
-import FormaDePagoSection from "@/components/boleteria/formaDePagoSection";
+} from "../components/boleteria/Entradas-Section";
+import FormaDePagoSection from "../components/boleteria/FormasDePagoSection";
+import { Button } from "../components/ui/button";
 
-// --- Tipos (sin cambios) ---
-export type TipoEntrada = {
+export interface TipoEntrada {
   id: number;
   nombre: string;
   precio: number;
-};
+}
 
-export type FormaDePago = {
+export interface FormaDePago {
   id: number;
   nombre: string;
-};
+}
 
 export const FormaPagoEnum = {
   EFECTIVO: 1,
@@ -119,7 +119,7 @@ export default function Boleteria() {
   const [paymentMethod, setPaymentMethod] = useState<number | null>(
     FormaPagoEnum.EFECTIVO,
   );
-  const [cardInfo, setCardInfo] = useState<{
+  const [cardInfo] = useState<{
     numero?: string;
     venc?: string;
     cvv?: string;
@@ -156,7 +156,9 @@ export default function Boleteria() {
         if (dataFormas.success) {
           setFormasDePago(dataFormas.data);
         } else {
-          throw new Error(dataFormas.message || "Error en API de formas de pago");
+          throw new Error(
+            dataFormas.message || "Error en API de formas de pago",
+          );
         }
       } catch (err: any) {
         console.error(err);
@@ -173,9 +175,15 @@ export default function Boleteria() {
   const canNextFromCantidad = quantity >= 1 && quantity <= 10;
   const canNextFromEntradas = entries.length === quantity;
   const canNextFromPago = !!paymentMethod;
-  
+
   // Array para obtener la validación de paso
-  const validationMap = [canNextFromFecha, canNextFromCantidad, canNextFromEntradas, canNextFromPago, true];
+  const validationMap = [
+    canNextFromFecha,
+    canNextFromCantidad,
+    canNextFromEntradas,
+    canNextFromPago,
+    true,
+  ];
 
   const total = useMemo(
     () => entries.reduce((s, e) => s + e.precioCalculado, 0),
@@ -214,6 +222,7 @@ export default function Boleteria() {
     return body;
   }, [paymentMethod, selectedDate, entries, cardInfo]);
 
+  // eslint-disable-next-line consistent-return
   const handleSubmit = useCallback(async () => {
     // ... (lógica handleSubmit sin cambios) ...
     if (!canNextFromFecha) return alert("Seleccioná una fecha");
@@ -257,7 +266,7 @@ export default function Boleteria() {
       setStep("fecha");
     } catch (err: any) {
       console.error(err);
-      alert("Error al enviar pedido: " + (err?.message ?? err));
+      alert(`Error al enviar pedido: ${err?.message ?? err}`);
     } finally {
       setSending(false);
     }
@@ -268,7 +277,7 @@ export default function Boleteria() {
     quantity,
     buildRequestBody,
   ]);
-  
+
   // --- Mapeo de contenido de pasos ---
   const stepContentMap: Record<Step, JSX.Element> = {
     fecha: (
@@ -289,10 +298,7 @@ export default function Boleteria() {
       </>
     ),
     cantidad: (
-      <QuantitySelector
-        value={quantity}
-        onChange={handleQuantityChange}
-      />
+      <QuantitySelector value={quantity} onChange={handleQuantityChange} />
     ),
     entradas: (
       <EntradasSection
@@ -338,10 +344,11 @@ export default function Boleteria() {
             {formasDePago.find((f) => f.id === paymentMethod)?.nombre ?? "-"}
           </div>
         </div>
-        
+
         {/* Botón de envío integrado en el paso de Revisar */}
         <div className="mb-4">
           <button
+            type="submit"
             onClick={handleSubmit}
             className={`px-4 py-2 rounded-md bg-green-800 text-white ${
               sending ? "opacity-60" : "hover:bg-green-900"
@@ -354,7 +361,7 @@ export default function Boleteria() {
       </div>
     ),
   };
-  
+
   const stepTitles: Record<Step, string> = {
     fecha: "1. Seleccionar Fecha",
     cantidad: "2. Cantidad de Entradas",
@@ -362,10 +369,16 @@ export default function Boleteria() {
     pago: "4. Forma de Pago",
     revisar: "5. Revisar y Confirmar",
   };
-  
+
   // --- Renderizado Principal (Renders all steps for stepper effect) ---
   if (loading) return <LoadingState />;
   if (error) return <ErrorState error={error} />;
+
+  function getClassName(isCurrent: boolean, isComplete: boolean) {
+    if (isCurrent) return "border-green-700 shadow-xl bg-white";
+    if (isComplete) return "border-green-300 bg-green-50";
+    return "border-gray-200 bg-gray-100 opacity-60";
+  }
 
   return (
     <div className="p-6 max-w-5xl mx-auto">
@@ -384,35 +397,35 @@ export default function Boleteria() {
         return (
           <div
             key={stepKey}
-            className={`mb-6 p-4 border rounded-lg transition-all duration-300 ${
-              isCurrent
-                ? "border-green-700 shadow-xl bg-white"
-                : isComplete
-                ? "border-green-300 bg-green-50" // Color más suave para pasos completados
-                : "border-gray-200 bg-gray-100 opacity-60" // Estilo para pasos futuros
-            }`}
+            className={`mb-6 p-4 border rounded-lg transition-all duration-300 ${getClassName(isCurrent, isComplete)}`}
           >
             {/* Encabezado del paso */}
-            <div
-              className={`flex justify-between items-center ${isComplete ? 'cursor-pointer' : ''}`}
-              // Permite volver a un paso completado haciendo click
+            <Button
+              asChild
+              variant="ghost"
               onClick={() => isComplete && setStep(stepKey)}
             >
-              <h2
-                className={`text-xl font-bold ${
-                  isComplete ? "text-gray-600" : "text-green-800"
-                }`}
+              <div
+                className={`flex justify-between items-center ${isComplete ? "cursor-pointer" : ""}`}
+                // Permite volver a un paso completado haciendo click
               >
-                {stepTitles[stepKey]}
-              </h2>
-              {/* Muestra icono de edición si el paso está completo */}
-              {isComplete && <EditIcon className="text-gray-500 cursor-pointer" />}
-            </div>
-
+                <h2
+                  className={`text-xl font-bold ${
+                    isComplete ? "text-gray-600" : "text-green-800"
+                  }`}
+                >
+                  {stepTitles[stepKey]}
+                </h2>
+                {/* Muestra icono de edición si el paso está completo */}
+                {isComplete && (
+                  <EditIcon className="text-gray-500 cursor-pointer" />
+                )}
+              </div>
+            </Button>
             {/* Contenido y Navegación */}
             {/* El contenido solo se muestra completamente si es el paso actual */}
-            <div 
-                className={`transition-all duration-300 overflow-hidden ${isCurrent ? 'max-h-screen mt-4 pt-4 border-t' : 'max-h-0'}`}
+            <div
+              className={`transition-all duration-300 overflow-hidden ${isCurrent ? "max-h-screen mt-4 pt-4 border-t" : "max-h-0"}`}
             >
               {/* Renderizar contenido */}
               {stepContentMap[stepKey]}
@@ -422,6 +435,7 @@ export default function Boleteria() {
                 <div className="flex gap-2 mt-3">
                   {index > 0 && (
                     <button
+                      type="button"
                       onClick={() => setStep(STEPS[index - 1])}
                       className="px-4 py-2 rounded-md border text-gray-700 hover:bg-gray-100"
                     >
@@ -429,6 +443,7 @@ export default function Boleteria() {
                     </button>
                   )}
                   <button
+                    type="button"
                     onClick={() => setStep(STEPS[index + 1])}
                     disabled={!canNext}
                     className={`px-4 py-2 rounded-md text-white ${
@@ -442,12 +457,11 @@ export default function Boleteria() {
                 </div>
               )}
             </div>
-            
             {/* Texto de resumen para pasos completados (visible cuando el contenido está colapsado) */}
             {isComplete && !isCurrent && stepKey !== "revisar" && (
-                <div className="text-sm text-gray-500 pt-2">
-                    Paso completado. Click en el título para editar.
-                </div>
+              <div className="text-sm text-gray-500 pt-2">
+                Paso completado. Click en el título para editar.
+              </div>
             )}
           </div>
         );
