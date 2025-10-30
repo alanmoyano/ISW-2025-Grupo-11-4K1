@@ -35,6 +35,25 @@ export const FormaPagoEnum = {
   MERCADO_PAGO: 2,
 } as const;
 
+function formatArgentinaDate(dateObj) {
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "America/Argentina/Buenos_Aires",
+  };
+
+  // Formatea la fecha, el resultado suele ser "DD/MM/YYYY"
+  const formattedDate = new Intl.DateTimeFormat("es-AR", options).format(
+    dateObj,
+  );
+
+  // Reordena el resultado de DD/MM/YYYY a YYYY-MM-DD
+  const [day, month, year] = formattedDate.split("/");
+
+  return `${year}-${month}-${day}`;
+}
+
 // --- Tipos de Pasos ---
 type Step = "fecha" | "cantidad" | "entradas" | "pago" | "revisar";
 const STEPS: Step[] = ["fecha", "cantidad", "entradas", "pago", "revisar"];
@@ -106,8 +125,15 @@ export default function Boleteria() {
   const { theme } = useContext(ThemesContext);
   const navigate = useNavigate();
 
+  const hoyDate = new Date();
+  const hoy = formatArgentinaDate(hoyDate);
+  const manana = formatArgentinaDate(new Date(hoyDate.getTime() + 86400000));
+  const pasadoManana = formatArgentinaDate(
+    new Date(hoyDate.getTime() + 2 * 86400000),
+  );
+
   // fechas (sin cambios)
-  const availableDates = ["2025-10-22", "2025-10-23", "2025-10-24"];
+  const availableDates = [hoy, manana, pasadoManana];
 
   // pasos del formulario
   const [step, setStep] = useState<Step>("fecha");
