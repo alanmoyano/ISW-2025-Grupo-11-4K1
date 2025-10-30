@@ -282,7 +282,11 @@ export default function Boleteria() {
         throw new Error(msg);
       }
 
+      const link = "https://www.mercadopago.com.ar";
+      window.open(link, "_blank");
+
       alert("Pedido enviado correctamente");
+
       // reset
       setEntries([]);
       setSelectedDate(null);
