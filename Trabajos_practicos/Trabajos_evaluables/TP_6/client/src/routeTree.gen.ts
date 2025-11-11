@@ -8,70 +8,70 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./routes/__root";
-import { Route as BoleteriaRouteImport } from "./routes/boleteria";
-import { Route as IndexRouteImport } from "./routes/index";
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as BoleteriaRouteImport } from './routes/boleteria'
+import { Route as IndexRouteImport } from './routes/index'
 
 const BoleteriaRoute = BoleteriaRouteImport.update({
-  id: "/boleteria",
-  path: "/boleteria",
+  id: '/boleteria',
+  path: '/boleteria',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 const IndexRoute = IndexRouteImport.update({
-  id: "/",
-  path: "/",
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any);
+} as any)
 
 export interface FileRoutesByFullPath {
-  "/": typeof IndexRoute;
-  "/boleteria": typeof BoleteriaRoute;
+  '/': typeof IndexRoute
+  '/boleteria': typeof BoleteriaRoute
 }
 export interface FileRoutesByTo {
-  "/": typeof IndexRoute;
-  "/boleteria": typeof BoleteriaRoute;
+  '/': typeof IndexRoute
+  '/boleteria': typeof BoleteriaRoute
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport;
-  "/": typeof IndexRoute;
-  "/boleteria": typeof BoleteriaRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/boleteria': typeof BoleteriaRoute
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: "/" | "/boleteria";
-  fileRoutesByTo: FileRoutesByTo;
-  to: "/" | "/boleteria";
-  id: "__root__" | "/" | "/boleteria";
-  fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths: '/' | '/boleteria'
+  fileRoutesByTo: FileRoutesByTo
+  to: '/' | '/boleteria'
+  id: '__root__' | '/' | '/boleteria'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  BoleteriaRoute: typeof BoleteriaRoute;
+  IndexRoute: typeof IndexRoute
+  BoleteriaRoute: typeof BoleteriaRoute
 }
 
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    "/boleteria": {
-      id: "/boleteria";
-      path: "/boleteria";
-      fullPath: "/boleteria";
-      preLoaderRoute: typeof BoleteriaRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
-    "/": {
-      id: "/";
-      path: "/";
-      fullPath: "/";
-      preLoaderRoute: typeof IndexRouteImport;
-      parentRoute: typeof rootRouteImport;
-    };
+    '/boleteria': {
+      id: '/boleteria'
+      path: '/boleteria'
+      fullPath: '/boleteria'
+      preLoaderRoute: typeof BoleteriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BoleteriaRoute: BoleteriaRoute,
-};
+}
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>();
+  ._addFileTypes<FileRouteTypes>()
