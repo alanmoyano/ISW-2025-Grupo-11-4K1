@@ -122,8 +122,8 @@ export default function FormaDePagoSection({
 
   // Se definen los colores una vez
   const colors = {
-    green: theme?.colors?.verdePakistani ?? "#2f8f4f",
-    greenDark: theme?.colors?.verdePakistani ?? "#256837",
+    green: theme?.colors?.verdePakistani ?? "#2e8a4c",
+    greenDark: theme?.colors?.verdePakistani ?? "#266b39",
   };
 
   return (
