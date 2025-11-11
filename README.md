@@ -50,7 +50,7 @@ Para la ubicación física se parte del directorio raíz del repositorio (cuyo n
 | Nombre del ítem de configuración | Regla de nombrado                                       | Ubicación física                             |
 | -------------------------------- | ------------------------------------------------------- | -------------------------------------------- |
 | Apunte                           | `AP_<NombreDelApunte>.pdf`                              | /Bibliografia/Apuntes                        |
-| Resumen                          | `RE_<NroParcial>_<ApellidoDueño>.pdf`                   | /Bibliografia/Resumenes                      |
+| Resumen                          | `RE_<NroParcial>_<ApellidoDueño>_<Tema>.pdf`            | /Bibliografia/Resumenes                      |
 | EjerciciosResueltos              | `EJ_<NombreEjercicio>_<ApellidoDueño>_<NroParcial>.pdf` | /Bibliografia/Ejercicios                     |
 | Diapositivas de clase            | `PPT_<NroFilmina>_<NombreTema>.pdf`                     | /Bibliografia/Filminas                       |
 | Guia trabajos practicos          | `GUIA_<TipoTP>.pdf`                                     | /Trabajos_Practicos/Guias_trabajos_practicos |
@@ -68,6 +68,7 @@ El equipo de trabajo llegó a la decisión de crear una nueva linea base o actua
 - `<NombreDelApunte>`: Identificador del apunte.
 - `<ApellidoDueño>`: Apellido del autor del resumen.
 - `<NroParcial>`: Número correspondiente al parcial asociado al resumen o ejercicio.
+- `<Tema>`: Tema o unidad correspondiente al resumen. Si es "Completo" se refiere a un rejunte de temas o unidades.
 - `<NroFilmina>`: Número de la filmina según el aula virtual.
 - `<NombreTema>`: Nombre del tema correspondiente a la filmina.
 - `<NombreEjercicio>`: Nombre del ejercicio resuelto.
